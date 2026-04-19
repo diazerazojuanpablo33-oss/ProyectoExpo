@@ -83,6 +83,7 @@ padding:1.25rem 0 2.5rem;
 .back-link{
 display:inline-flex;
 align-items:center;
+justify-content:center;
 gap:0.45rem;
 padding:0.8rem 1.1rem;
 margin-bottom:1.2rem;
@@ -170,6 +171,7 @@ display:flex;
 flex-wrap:wrap;
 gap:0.85rem;
 margin-top:1.5rem;
+align-items:stretch;
 }
 
 .status-strip{
@@ -184,6 +186,7 @@ padding:1rem 1.1rem;
 border-radius:22px;
 background:rgba(255, 255, 255, 0.05);
 border:1px solid var(--border-soft);
+min-width:0;
 }
 
 .status-card span{
@@ -238,7 +241,8 @@ border-radius:999px;
 background:rgba(240, 100, 73, 0.14);
 border:1px solid rgba(240, 100, 73, 0.2);
 font-size:0.95rem;
-white-space:nowrap;
+white-space:normal;
+max-width:100%;
 }
 
 .story-card,
@@ -298,6 +302,7 @@ padding:0.9rem 1.1rem;
 background:linear-gradient(135deg, var(--accent), #cc503d);
 color:#fff9f1;
 box-shadow:0 18px 35px rgba(240, 100, 73, 0.22);
+width:100%;
 }
 
 .choice-button:hover,
@@ -315,6 +320,7 @@ padding:0.9rem 1.1rem;
 background:rgba(255, 255, 255, 0.04);
 color:var(--text);
 border:1px solid var(--border-soft);
+min-height:52px;
 }
 
 .ghost-button{
@@ -388,6 +394,7 @@ padding:1rem;
 border-radius:22px;
 background:rgba(255, 255, 255, 0.04);
 border:1px solid var(--border-soft);
+min-width:0;
 }
 
 .legend-card h3{
@@ -497,6 +504,7 @@ justify-content:center;
 background:rgba(255, 255, 255, 0.06);
 color:var(--text);
 border:1px solid var(--border-soft);
+min-height:50px;
 }
 
 .toast{
@@ -504,6 +512,7 @@ position:fixed;
 left:50%;
 bottom:1.25rem;
 transform:translate(-50%, 18px);
+width:min(calc(100% - 1rem), 560px);
 padding:0.9rem 1.1rem;
 border-radius:999px;
 background:rgba(12, 10, 18, 0.92);
@@ -514,6 +523,7 @@ opacity:0;
 pointer-events:none;
 transition:opacity 0.25s ease, transform 0.25s ease;
 z-index:30;
+text-align:center;
 }
 
 .toast.visible{
@@ -547,6 +557,10 @@ border-radius:24px;
 .modal-copy p{
 font-size:1.14rem;
 }
+
+.back-link{
+width:100%;
+}
 }
 
 @media (max-width: 640px){
@@ -564,12 +578,94 @@ font-size:2.4rem;
 flex-direction:column;
 }
 
+.hero-actions > *,
+.actions-row > *{
+width:100%;
+}
+
 .status-card strong{
 font-size:1.25rem;
 }
 
 .panel-head{
 flex-direction:column;
+}
+
+.hero{
+padding:1rem;
+border-radius:24px;
+}
+
+.hero p{
+font-size:1.05rem;
+}
+
+.panel,
+.story-card,
+.progress-card,
+.tips-card{
+padding:1rem;
+border-radius:22px;
+}
+
+#sceneTitle{
+font-size:1.35rem;
+}
+
+#texto{
+font-size:1.05rem;
+}
+
+.progress-label{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.modal{
+padding:0.75rem;
+}
+
+.modal-card{
+padding:0.85rem;
+border-radius:22px;
+}
+
+.modal-card img{
+height:min(32vh, 220px);
+}
+
+.close-button{
+width:100%;
+margin-left:0;
+}
+
+.toast{
+border-radius:20px;
+bottom:0.75rem;
+}
+}
+
+@media (max-width: 480px){
+.hero h1{
+font-size:2rem;
+}
+
+.eyebrow,
+.story-label,
+.legend-state,
+.scene-badge{
+font-size:0.82rem;
+}
+
+.status-card,
+.legend-card{
+padding:0.9rem;
+}
+
+.panel-head p,
+.progress-card p,
+.legend-card p{
+font-size:1rem;
 }
 }
 

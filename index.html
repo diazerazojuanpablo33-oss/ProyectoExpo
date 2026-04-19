@@ -144,6 +144,7 @@ align-items:center;
 gap:1rem;
 flex-wrap:wrap;
 justify-content:center;
+min-width:0;
 }
 
 .nav-links a{
@@ -173,6 +174,7 @@ border-radius:999px;
 background:rgba(31, 107, 87, 0.12);
 color:var(--text);
 font-weight:700;
+flex-shrink:0;
 }
 
 .theme-toggle:hover,
@@ -186,7 +188,7 @@ transform:translateY(-2px);
 .hero{
 position:relative;
 margin-top:1rem;
-min-height:86vh;
+min-height:min(86vh, 860px);
 display:grid;
 align-items:end;
 padding:2rem;
@@ -216,6 +218,7 @@ linear-gradient(120deg, rgba(19, 35, 31, 0.8), rgba(215, 106, 58, 0.18));
 position:relative;
 z-index:1;
 max-width:760px;
+width:min(100%, 760px);
 padding:1.6rem;
 border:1px solid rgba(255,255,255,0.18);
 border-radius:28px;
@@ -242,7 +245,7 @@ h2,
 h3{
 margin:0;
 font-family:"Fraunces", Georgia, serif;
-line-height:1;
+line-height:1.08;
 }
 
 .hero h1{
@@ -263,6 +266,7 @@ display:flex;
 flex-wrap:wrap;
 gap:0.85rem;
 margin-top:1.5rem;
+align-items:stretch;
 }
 
 .button-primary,
@@ -276,6 +280,7 @@ padding:0.95rem 1.2rem;
 border-radius:18px;
 text-decoration:none;
 font-weight:800;
+min-height:52px;
 }
 
 .button-primary{
@@ -425,6 +430,11 @@ object-fit:cover;
 border-radius:20px;
 }
 
+.legend-card img{
+aspect-ratio:16 / 10;
+height:auto;
+}
+
 .place-copy{
 display:flex;
 flex-direction:column;
@@ -436,6 +446,25 @@ gap:0.85rem;
 margin:0;
 color:var(--muted);
 line-height:1.75;
+}
+
+.route-note{
+margin-top:0.95rem;
+padding:0.95rem 1rem;
+border-radius:20px;
+background:rgba(31, 107, 87, 0.07);
+border:1px solid var(--line);
+}
+
+.route-note strong{
+display:block;
+font-size:0.98rem;
+}
+
+.route-note p{
+margin:0.35rem 0 0;
+font-size:0.97rem;
+line-height:1.6;
 }
 
 .place-meta{
@@ -526,6 +555,10 @@ gap:1rem;
 display:flex;
 flex-wrap:wrap;
 gap:0.75rem;
+}
+
+.map-actions > *{
+flex:1 1 180px;
 }
 
 .review-layout{
@@ -666,6 +699,8 @@ display:none;
 
 .lightbox-card{
 width:min(920px, 100%);
+max-height:min(92vh, 920px);
+overflow:auto;
 padding:1rem;
 border-radius:28px;
 background:var(--surface-strong);
@@ -738,6 +773,10 @@ grid-template-columns:1fr;
 .nav{
 border-radius:28px;
 }
+
+.section-heading{
+align-items:flex-start;
+}
 }
 
 @media (max-width: 720px){
@@ -745,9 +784,14 @@ border-radius:28px;
 width:min(100% - 1rem, 1200px);
 }
 
+.site-header{
+padding-top:0.55rem;
+}
+
 .nav{
-align-items:flex-start;
+align-items:stretch;
 padding:1rem;
+border-radius:24px;
 }
 
 .nav,
@@ -755,13 +799,57 @@ padding:1rem;
 flex-direction:column;
 }
 
+.brand{
+justify-content:center;
+width:100%;
+}
+
+.nav-links{
+display:grid;
+grid-template-columns:repeat(2, minmax(0, 1fr));
+width:100%;
+gap:0.65rem;
+}
+
+.nav-links a{
+padding:0.8rem 0.7rem;
+border:1px solid var(--line);
+border-radius:16px;
+background:var(--surface-strong);
+text-align:center;
+}
+
+.theme-toggle{
+width:100%;
+}
+
 .hero{
 min-height:auto;
 padding:1rem;
+border-radius:24px;
 }
 
 .hero-card{
 padding:1.1rem;
+border-radius:22px;
+}
+
+.hero h1{
+font-size:clamp(2.2rem, 9vw, 3.4rem);
+max-width:11ch;
+}
+
+.hero p{
+font-size:1rem;
+}
+
+.hero-actions{
+flex-direction:column;
+}
+
+.hero-actions > *,
+.map-actions > *{
+width:100%;
 }
 
 .gallery-grid{
@@ -770,6 +858,59 @@ grid-template-columns:1fr;
 
 .section-card{
 padding:1.1rem;
+border-radius:24px;
+}
+
+.map-frame,
+#map{
+min-height:340px;
+}
+
+.lightbox{
+padding:0.75rem;
+}
+
+.lightbox-card{
+padding:0.85rem;
+border-radius:22px;
+}
+
+.lightbox-head{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.lightbox-close{
+width:100%;
+}
+}
+
+@media (max-width: 560px){
+.nav-links{
+grid-template-columns:1fr;
+}
+
+.hero-stat{
+padding:0.9rem;
+}
+
+.section-heading h2{
+font-size:1.8rem;
+}
+
+.place-card img,
+.gallery-card img{
+aspect-ratio:16 / 10;
+height:auto;
+}
+
+.gallery-card{
+min-height:auto;
+}
+
+.qr-card img{
+max-width:180px;
+margin:0 auto;
 }
 }
 
@@ -885,7 +1026,7 @@ Se disfruta mejor como un conjunto: paisaje, comida local, aire limpio, caminata
 <span class="eyebrow-plain">Lugares</span>
 <h2>Paradas que vale la pena recorrer</h2>
 </div>
-<p>Estos espacios ayudan a entender la variedad de Malchingu&iacute;: naturaleza protegida, panoramas amplios y vida cotidiana con identidad propia.</p>
+<p>Estos espacios ayudan a entender la variedad de Malchingu&iacute;: naturaleza protegida, panoramas amplios y vida cotidiana con identidad propia. Los tiempos son referenciales en veh&iacute;culo y pueden variar seg&uacute;n el tr&aacute;fico o el clima.</p>
 </div>
 
 <div class="grid-two">
@@ -898,6 +1039,14 @@ Se disfruta mejor como un conjunto: paisaje, comida local, aire limpio, caminata
 Uno de los espacios naturales m&aacute;s valiosos de la zona. Su ecosistema de bosque seco andino ofrece senderos, observaci&oacute;n del paisaje
 y una oportunidad real de conectar con el entorno de manera tranquila y educativa.
 </p>
+<div class="route-note">
+<strong>Tiempo estimado</strong>
+<p>45 a 55 min desde Quito y 12 a 15 min desde el centro de Malchingu&iacute;.</p>
+</div>
+<div class="route-note">
+<strong>C&oacute;mo llegar</strong>
+<p>En auto, ve por la Panamericana Norte, toma el desv&iacute;o Pisque - Pu&eacute;llaro y sigue la se&ntilde;alizaci&oacute;n al Bosque Jerusalem. En bus, puedes salir desde La Ofelia hacia Guayllabamba y luego tomar una camioneta hasta el ingreso.</p>
+</div>
 </div>
 <div class="place-meta">
 <span class="pill">Naturaleza</span>
@@ -916,6 +1065,14 @@ y una oportunidad real de conectar con el entorno de manera tranquila y educativ
 Un punto ideal para observar la parroquia y sentir el car&aacute;cter abierto del territorio.
 La visita gana fuerza cuando se combina con las leyendas locales que hablan de campanas perdidas y noches de eco.
 </p>
+<div class="route-note">
+<strong>Tiempo estimado</strong>
+<p>50 a 60 min desde Quito y 8 a 10 min en auto desde el centro parroquial; a pie puede tomar 20 a 30 min.</p>
+</div>
+<div class="route-note">
+<strong>C&oacute;mo llegar</strong>
+<p>Desde el centro de Malchingu&iacute;, toma la v&iacute;a local que sube hacia la meseta del campanario. El tramo final es corto y conviene hacerlo con calma por el camino vecinal.</p>
+</div>
 </div>
 <div class="place-meta">
 <span class="pill">Mirador</span>
@@ -933,6 +1090,14 @@ La visita gana fuerza cuando se combina con las leyendas locales que hablan de c
 <p>
 Recorrer el centro permite entender la escala del lugar: comercio cercano, ritmo tranquilo y una vida comunitaria que hace que el viaje se sienta humano, no solo visual.
 </p>
+<div class="route-note">
+<strong>Tiempo estimado</strong>
+<p>45 min desde Quito y 0 a 5 min una vez que llegas a Malchingu&iacute;.</p>
+</div>
+<div class="route-note">
+<strong>C&oacute;mo llegar</strong>
+<p>Ingresa por la v&iacute;a principal de la parroquia y ubica el parque central. Desde ese punto puedes recorrer a pie la iglesia, el comercio y el entorno local.</p>
+</div>
 </div>
 <div class="place-meta">
 <span class="pill">Cultura local</span>
@@ -950,6 +1115,14 @@ Recorrer el centro permite entender la escala del lugar: comercio cercano, ritmo
 <p>
 Aunque la experiencia principal est&aacute; en Malchingu&iacute;, los paisajes de la zona y sus relatos vinculados a Mojanda ampl&iacute;an el recorrido con una sensaci&oacute;n m&aacute;s andina y legendaria.
 </p>
+<div class="route-note">
+<strong>Tiempo estimado</strong>
+<p>1 h 30 min a 1 h 50 min desde Quito y 40 a 50 min desde Malchingu&iacute; en veh&iacute;culo.</p>
+</div>
+<div class="route-note">
+<strong>C&oacute;mo llegar</strong>
+<p>Sal desde Malchingu&iacute; hacia la Panamericana Norte en direcci&oacute;n a Tabacundo y contin&uacute;a por la v&iacute;a de acceso a Mojanda. El tramo final es de tierra, por lo que se recomienda ir en veh&iacute;culo alto o con precauci&oacute;n en temporada de lluvia.</p>
+</div>
 </div>
 <div class="place-meta">
 <span class="pill">Panorama</span>
