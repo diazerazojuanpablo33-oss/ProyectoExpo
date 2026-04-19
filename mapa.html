@@ -1,50 +1,796 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mapa de Malchingui</title>
-  <style>
-body{
-font-family: Arial, sans-serif;
-margin:0;
-background: linear-gradient(#2E7D32,#A5D6A7);
-color:white;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa de Malchingu&iacute; | Ruta y referencia</title>
+<meta name="description" content="Mapa referencial de Malchingu&iacute; con ruta desde Quito, datos r&aacute;pidos y recomendaciones para la visita.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+:root{
+--bg:#eef3ee;
+--surface:rgba(255, 255, 255, 0.84);
+--surface-strong:rgba(255, 255, 255, 0.95);
+--surface-dark:#12201d;
+--text:#182624;
+--muted:#5c6b67;
+--line:rgba(24, 38, 36, 0.12);
+--brand:#1d6f59;
+--brand-deep:#144739;
+--accent:#e18742;
+--shadow:0 28px 60px rgba(25, 39, 35, 0.12);
 }
-    header{
-      background:#2c3e50;
-      color:white;
-      padding:20px;
-    }
-    .container{
-      padding:20px;
-    }
-    iframe{
-      width:90%;
-      height:500px;
-      border:0;
-      border-radius:10px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.2);
-    }
-  </style>
+
+body[data-theme="night"]{
+--bg:#081110;
+--surface:rgba(13, 24, 22, 0.82);
+--surface-strong:rgba(15, 27, 25, 0.95);
+--surface-dark:#050c0c;
+--text:#eef3f0;
+--muted:#b4c2be;
+--line:rgba(227, 238, 234, 0.08);
+--brand:#5cc6a1;
+--brand-deep:#2d8b6c;
+--accent:#f2a161;
+--shadow:0 28px 60px rgba(0, 0, 0, 0.3);
+}
+
+*{
+box-sizing:border-box;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+margin:0;
+font-family:"Manrope", Arial, sans-serif;
+color:var(--text);
+background:
+radial-gradient(circle at top left, rgba(29, 111, 89, 0.18), transparent 28%),
+radial-gradient(circle at bottom right, rgba(225, 135, 66, 0.16), transparent 26%),
+var(--bg);
+transition:background 0.35s ease, color 0.35s ease;
+}
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+background-size:34px 34px;
+opacity:0.25;
+pointer-events:none;
+z-index:0;
+}
+
+a{
+color:inherit;
+}
+
+button{
+font:inherit;
+}
+
+.page-shell{
+position:relative;
+z-index:1;
+width:min(1160px, calc(100% - 1.5rem));
+margin:0 auto;
+padding:1rem 0 2rem;
+}
+
+.nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:1rem;
+padding:0.95rem 1.1rem;
+border:1px solid var(--line);
+border-radius:999px;
+background:rgba(255,255,255,0.7);
+backdrop-filter:blur(16px);
+box-shadow:var(--shadow);
+}
+
+body[data-theme="night"] .nav{
+background:rgba(8, 15, 15, 0.78);
+}
+
+.brand{
+display:inline-flex;
+align-items:center;
+gap:0.7rem;
+text-decoration:none;
+font-weight:800;
+}
+
+.brand-mark{
+display:grid;
+place-items:center;
+width:42px;
+height:42px;
+border-radius:14px;
+background:linear-gradient(135deg, var(--brand), var(--accent));
+color:#fff;
+font-family:"Fraunces", Georgia, serif;
+}
+
+.nav-links{
+display:flex;
+gap:1rem;
+align-items:center;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+.nav-links a{
+text-decoration:none;
+font-weight:700;
+color:var(--muted);
+}
+
+.nav-links a:hover{
+color:var(--brand);
+}
+
+.theme-toggle,
+.button-primary,
+.button-secondary,
+.map-control{
+border:none;
+cursor:pointer;
+transition:transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+}
+
+.theme-toggle{
+padding:0.75rem 1rem;
+border-radius:999px;
+background:rgba(29, 111, 89, 0.12);
+color:var(--text);
+font-weight:800;
+}
+
+.theme-toggle:hover,
+.button-primary:hover,
+.button-secondary:hover,
+.map-control:hover{
+transform:translateY(-2px);
+}
+
+.hero{
+display:grid;
+grid-template-columns:minmax(0, 1.05fr) minmax(300px, 0.95fr);
+gap:1rem;
+margin-top:1rem;
+}
+
+.hero-card,
+.aside-card,
+.section-card{
+border-radius:30px;
+border:1px solid var(--line);
+box-shadow:var(--shadow);
+background:var(--surface);
+backdrop-filter:blur(16px);
+}
+
+.hero-card{
+position:relative;
+overflow:hidden;
+min-height:420px;
+display:flex;
+align-items:flex-end;
+padding:1.5rem;
+}
+
+.hero-card img{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.hero-card::after{
+content:"";
+position:absolute;
+inset:0;
+background:
+linear-gradient(180deg, rgba(10, 17, 17, 0.08), rgba(10, 17, 17, 0.76)),
+linear-gradient(125deg, rgba(20, 71, 57, 0.8), rgba(225, 135, 66, 0.18));
+}
+
+.hero-copy{
+position:relative;
+z-index:1;
+max-width:640px;
+padding:1.3rem;
+border-radius:24px;
+background:rgba(9, 16, 16, 0.48);
+border:1px solid rgba(255,255,255,0.14);
+color:#fffef9;
+}
+
+.eyebrow{
+display:inline-flex;
+align-items:center;
+padding:0.45rem 0.8rem;
+border-radius:999px;
+background:rgba(255,255,255,0.1);
+font-size:0.85rem;
+font-weight:800;
+letter-spacing:0.1em;
+text-transform:uppercase;
+}
+
+h1,
+h2,
+h3{
+margin:0;
+font-family:"Fraunces", Georgia, serif;
+line-height:1;
+}
+
+.hero-copy h1{
+margin-top:0.95rem;
+font-size:clamp(2.5rem, 5vw, 4.8rem);
+max-width:9ch;
+}
+
+.hero-copy p{
+margin:1rem 0 0;
+line-height:1.7;
+font-size:1.08rem;
+color:rgba(255,254,249,0.88);
+}
+
+.hero-actions{
+display:flex;
+flex-wrap:wrap;
+gap:0.75rem;
+margin-top:1.25rem;
+}
+
+.button-primary,
+.button-secondary,
+.map-control{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:0.92rem 1.2rem;
+border-radius:18px;
+text-decoration:none;
+font-weight:800;
+}
+
+.button-primary{
+background:linear-gradient(135deg, var(--accent), #c76a24);
+color:#fff9f2;
+box-shadow:0 18px 34px rgba(225, 135, 66, 0.22);
+}
+
+.button-secondary,
+.map-control{
+background:rgba(255,255,255,0.08);
+color:#fff;
+border:1px solid rgba(255,255,255,0.14);
+}
+
+.aside-card{
+padding:1.4rem;
+display:grid;
+gap:1rem;
+}
+
+.mini-grid{
+display:grid;
+grid-template-columns:repeat(2, minmax(0, 1fr));
+gap:0.85rem;
+}
+
+.mini-stat{
+padding:1rem;
+border-radius:22px;
+background:var(--surface-strong);
+border:1px solid var(--line);
+}
+
+.mini-stat span{
+display:block;
+font-size:0.82rem;
+font-weight:800;
+letter-spacing:0.1em;
+text-transform:uppercase;
+color:var(--brand);
+}
+
+.mini-stat strong{
+display:block;
+margin-top:0.4rem;
+font-size:1.25rem;
+}
+
+.aside-card p,
+.section-heading p,
+.tip-card p,
+.route-card p{
+margin:0.65rem 0 0;
+color:var(--muted);
+line-height:1.7;
+}
+
+.section-card{
+padding:1.35rem;
+margin-top:1rem;
+}
+
+.section-heading{
+display:flex;
+justify-content:space-between;
+align-items:end;
+gap:1rem;
+flex-wrap:wrap;
+margin-bottom:1rem;
+}
+
+.eyebrow-plain{
+display:block;
+margin-bottom:0.45rem;
+font-size:0.84rem;
+font-weight:800;
+letter-spacing:0.12em;
+text-transform:uppercase;
+color:var(--brand);
+}
+
+.map-layout{
+display:grid;
+grid-template-columns:minmax(0, 1.15fr) minmax(300px, 0.85fr);
+gap:1rem;
+align-items:start;
+}
+
+.map-frame{
+min-height:560px;
+border-radius:28px;
+overflow:hidden;
+border:1px solid var(--line);
+}
+
+#travelMap{
+height:100%;
+min-height:560px;
+}
+
+.map-side{
+display:grid;
+gap:1rem;
+}
+
+.route-card,
+.tip-card{
+padding:1.1rem;
+border-radius:24px;
+background:var(--surface-strong);
+border:1px solid var(--line);
+}
+
+.map-controls{
+display:flex;
+flex-wrap:wrap;
+gap:0.75rem;
+margin-top:1rem;
+}
+
+.tips-grid{
+display:grid;
+grid-template-columns:repeat(3, minmax(0, 1fr));
+gap:1rem;
+}
+
+.tip-card ul{
+margin:0.85rem 0 0;
+padding-left:1.1rem;
+color:var(--muted);
+line-height:1.7;
+}
+
+.quick-strip{
+display:grid;
+grid-template-columns:repeat(3, minmax(0, 1fr));
+gap:1rem;
+}
+
+.quick-card{
+padding:1rem;
+border-radius:22px;
+background:var(--surface-strong);
+border:1px solid var(--line);
+}
+
+.quick-card strong{
+display:block;
+font-size:1.2rem;
+}
+
+.quick-card p{
+margin:0.55rem 0 0;
+color:var(--muted);
+line-height:1.7;
+}
+
+.footer{
+margin-top:1rem;
+padding:1.3rem;
+border-radius:26px;
+background:var(--surface-dark);
+color:#eef3f0;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:1rem;
+flex-wrap:wrap;
+}
+
+.footer a{
+text-decoration:none;
+color:#eef3f0;
+font-weight:700;
+}
+
+.reveal{
+opacity:0;
+transform:translateY(24px);
+transition:opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible{
+opacity:1;
+transform:translateY(0);
+}
+
+@media (max-width: 980px){
+.hero,
+.map-layout,
+.tips-grid,
+.quick-strip{
+grid-template-columns:1fr;
+}
+
+.mini-grid{
+grid-template-columns:1fr 1fr;
+}
+}
+
+@media (max-width: 720px){
+.page-shell{
+width:min(100% - 1rem, 1160px);
+}
+
+.nav,
+.nav-links{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.nav{
+border-radius:28px;
+}
+
+.hero-card,
+.aside-card,
+.section-card{
+padding:1rem;
+}
+
+.mini-grid{
+grid-template-columns:1fr;
+}
+
+.hero-copy{
+padding:1rem;
+}
+
+#travelMap,
+.map-frame{
+min-height:420px;
+}
+}
+
+@media (prefers-reduced-motion: reduce){
+html{
+scroll-behavior:auto;
+}
+
+*{
+transition:none !important;
+animation:none !important;
+}
+}
+</style>
 </head>
 <body>
 
-<header>
-  <h1>Mapa de Malchingui</h1>
-  <p>Ubicación de Malchingui - Pichincha, Ecuador</p>
-</header>
-<br>
-<a href="index.html">⬅ Volver a la página principal</a>
-<div class="container">
-  <h2>Explora el mapa</h2>
-  <p>📍 Tiempo desde Quito: 45 minutos</p>
-<p>⛰ Altitud: 2.400 msnm</p>
-<p>🌡 Clima: templado seco</p>
-  <iframe 
-    src="https://www.google.com/maps?q=Malchingui%2C%20Pichincha%2C%20Ecuador&output=embed">
-  </iframe>
+<div class="page-shell">
+<nav class="nav">
+<a class="brand" href="index.html">
+<span class="brand-mark">M</span>
+<span>Malchingu&iacute;</span>
+</a>
+
+<div class="nav-links">
+<a href="index.html">Inicio</a>
+<a href="#ruta">Mapa</a>
+<a href="#consejos">Consejos</a>
+<a href="leyendasmalchingui.html">Leyendas</a>
 </div>
+
+<button class="theme-toggle" id="themeToggle" type="button">Modo noche</button>
+</nav>
+
+<header class="hero reveal">
+<section class="hero-card">
+<img src="fondaso15.png" alt="Vista del entorno de Malchingu&iacute;" loading="lazy">
+<div class="hero-copy">
+<div class="eyebrow">Orientaci&oacute;n para la visita</div>
+<h1>C&oacute;mo llegar y c&oacute;mo leer el territorio.</h1>
+<p>
+Esta p&aacute;gina re&uacute;ne una referencia visual entre Quito y Malchingu&iacute;, junto con
+datos b&aacute;sicos para planificar la salida y conectar el recorrido con el resto del proyecto.
+</p>
+<div class="hero-actions">
+<a class="button-primary" href="#ruta">Explorar mapa</a>
+<a class="button-secondary" href="index.html">Volver al turismo</a>
+<a class="button-secondary" href="leyendasmalchingui.html">Ir a leyendas</a>
+</div>
+</div>
+</section>
+
+<aside class="aside-card">
+<div>
+<span class="eyebrow-plain">Datos r&aacute;pidos</span>
+<h2>Un trayecto corto con mucha identidad</h2>
+<p>La ruta es referencial y sirve para ubicar el destino, no para sustituir una navegaci&oacute;n paso a paso.</p>
+</div>
+
+<div class="mini-grid">
+<div class="mini-stat">
+<span>Origen base</span>
+<strong>Quito</strong>
+</div>
+<div class="mini-stat">
+<span>Tiempo estimado</span>
+<strong>45 min</strong>
+</div>
+<div class="mini-stat">
+<span>Altitud</span>
+<strong>2.400 msnm</strong>
+</div>
+<div class="mini-stat">
+<span>Perfil</span>
+<strong>Paisaje + cultura</strong>
+</div>
+</div>
+
+<div class="route-card">
+<h3>Mejor forma de usar esta p&aacute;gina</h3>
+<p>Primero ubica la ruta, luego revisa los consejos de visita y finalmente vuelve al inicio para elegir tu plan o entrar a la experiencia de leyendas.</p>
+</div>
+</aside>
+</header>
+
+<main>
+<section class="section-card reveal" id="ruta">
+<div class="section-heading">
+<div>
+<span class="eyebrow-plain">Mapa</span>
+<h2>Ruta referencial entre Quito y Malchingu&iacute;</h2>
+</div>
+<p>El mapa resume el desplazamiento principal y marca puntos base para orientarte dentro del proyecto.</p>
+</div>
+
+<div class="map-layout">
+<div class="map-frame">
+<div id="travelMap" aria-label="Mapa referencial de Quito a Malchingu&iacute;"></div>
+</div>
+
+<div class="map-side">
+<article class="route-card">
+<h3>Controles del mapa</h3>
+<p>Usa estos accesos para centrar la ruta, acercarte a Malchingu&iacute; o volver a Quito sin perder contexto.</p>
+<div class="map-controls">
+<button class="map-control" id="showRoute" type="button">Ver ruta</button>
+<button class="map-control" id="showMalchingui" type="button">Ver Malchingu&iacute;</button>
+<button class="map-control" id="showQuito" type="button">Ver Quito</button>
+</div>
+</article>
+
+<article class="route-card">
+<h3>Lectura recomendada del recorrido</h3>
+<p>Empieza por un mirador o un punto natural, pasa luego por el mercado y cierra con la experiencia interactiva de leyendas para darle un final narrativo a la visita.</p>
+</article>
+
+<article class="route-card">
+<h3>Nota de referencia</h3>
+<p>Las coordenadas del mapa son orientativas y sirven para explicar el proyecto de forma visual. La navegaci&oacute;n final debe ajustarse seg&uacute;n el punto exacto de salida.</p>
+</article>
+<div class="hero-actions" style="margin-top:0;">
+<a class="button-primary" href="index.html">Abrir sitio principal</a>
+</div>
+</div>
+</div>
+</section>
+
+<section class="section-card reveal">
+<div class="section-heading">
+<div>
+<span class="eyebrow-plain">Plan</span>
+<h2>Una visita simple puede sentirse muy completa</h2>
+</div>
+<p>No hace falta una log&iacute;stica complicada. Con una buena secuencia, el recorrido se vuelve claro, agradable y memorable.</p>
+</div>
+
+<div class="quick-strip">
+<article class="quick-card">
+<strong>1. Llegada</strong>
+<p>Ubica el centro de referencia y define si quieres priorizar paisaje, mercado o una ruta m&aacute;s tranquila de observaci&oacute;n.</p>
+</article>
+
+<article class="quick-card">
+<strong>2. Recorrido</strong>
+<p>Combina un punto natural o mirador con una parada gastron&oacute;mica para equilibrar vistas, descanso y experiencia local.</p>
+</article>
+
+<article class="quick-card">
+<strong>3. Cierre</strong>
+<p>Vuelve al proyecto principal y abre la secci&oacute;n de leyendas para darle contexto cultural a lo que viste en el trayecto.</p>
+</article>
+</div>
+</section>
+
+<section class="section-card reveal" id="consejos">
+<div class="section-heading">
+<div>
+<span class="eyebrow-plain">Consejos</span>
+<h2>Detalles peque&ntilde;os que mejoran la salida</h2>
+</div>
+<p>Estas recomendaciones ayudan a que el viaje se sienta m&aacute;s c&oacute;modo y mejor aprovechado, especialmente si vas por primera vez.</p>
+</div>
+
+<div class="tips-grid">
+<article class="tip-card">
+<h3>Antes de salir</h3>
+<ul>
+<li>Lleva ropa c&oacute;moda y abrigo ligero.</li>
+<li>Consulta el clima del d&iacute;a para ajustar el plan.</li>
+<li>Carga el tel&eacute;fono si quieres usar mapa y c&aacute;mara.</li>
+</ul>
+</article>
+
+<article class="tip-card">
+<h3>Durante la visita</h3>
+<ul>
+<li>Reserva tiempo para caminar sin prisa.</li>
+<li>Observa la vida local, no solo los puntos destacados.</li>
+<li>Combina paisaje con una parada en el mercado.</li>
+</ul>
+</article>
+
+<article class="tip-card">
+<h3>Para el proyecto</h3>
+<ul>
+<li>Usa esta p&aacute;gina como apoyo visual en presentaciones.</li>
+<li>Conecta el mapa con el sitio principal y las leyendas.</li>
+<li>Mant&eacute;n la experiencia navegable desde celular y escritorio.</li>
+</ul>
+</article>
+</div>
+</section>
+</main>
+
+<footer class="footer">
+<div>
+<strong>Mapa de Malchingu&iacute;</strong>
+<p style="margin:0.4rem 0 0; color:rgba(238,243,240,0.72);">Ruta orientativa, datos r&aacute;pidos y conexi&oacute;n directa con el resto del proyecto.</p>
+</div>
+<div style="display:flex; gap:1rem; flex-wrap:wrap;">
+<a href="index.html">Volver al inicio</a>
+<a href="leyendasmalchingui.html">Abrir leyendas</a>
+</div>
+</footer>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+const THEME_KEY = "malchingui-theme-v2";
+
+const refs = {
+themeToggle: document.getElementById("themeToggle"),
+showRoute: document.getElementById("showRoute"),
+showMalchingui: document.getElementById("showMalchingui"),
+showQuito: document.getElementById("showQuito")
+};
+
+function applyTheme(theme) {
+document.body.dataset.theme = theme;
+refs.themeToggle.textContent = theme === "night" ? "Modo d\u00eda" : "Modo noche";
+localStorage.setItem(THEME_KEY, theme);
+}
+
+const savedTheme = localStorage.getItem(THEME_KEY);
+applyTheme(savedTheme === "night" ? "night" : "day");
+
+refs.themeToggle.addEventListener("click", () => {
+const nextTheme = document.body.dataset.theme === "night" ? "day" : "night";
+applyTheme(nextTheme);
+});
+
+const map = L.map("travelMap").setView([-0.07, -78.44], 10);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+maxZoom: 19,
+attribution: "&copy; OpenStreetMap"
+}).addTo(map);
+
+const quitoMarker = L.marker([-0.1807, -78.4678]).addTo(map).bindPopup("Quito");
+const malchinguiMarker = L.marker([-0.0046, -78.4053]).addTo(map).bindPopup("Malchingu\u00ed");
+
+const routeLine = L.polyline([
+[-0.1807, -78.4678],
+[-0.12, -78.445],
+[-0.06, -78.43],
+[-0.0046, -78.4053]
+], {
+color: "#e18742",
+weight: 5,
+opacity: 0.88,
+dashArray: "12 8"
+}).addTo(map);
+
+const referenceCircle = L.circle([-0.0046, -78.4053], {
+radius: 900,
+color: "#1d6f59",
+fillColor: "#1d6f59",
+fillOpacity: 0.12,
+weight: 2
+}).addTo(map).bindPopup("Zona referencial de Malchingu\u00ed");
+
+map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
+
+refs.showRoute.addEventListener("click", () => {
+map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
+});
+
+refs.showMalchingui.addEventListener("click", () => {
+map.setView([-0.0046, -78.4053], 13);
+malchinguiMarker.openPopup();
+referenceCircle.openPopup();
+});
+
+refs.showQuito.addEventListener("click", () => {
+map.setView([-0.1807, -78.4678], 12);
+quitoMarker.openPopup();
+});
+
+const observer = new IntersectionObserver((entries) => {
+entries.forEach((entry) => {
+if (entry.isIntersecting) {
+entry.target.classList.add("visible");
+}
+});
+}, {
+threshold: 0.16
+});
+
+document.querySelectorAll(".reveal").forEach((element) => {
+observer.observe(element);
+});
+</script>
 
 </body>
 </html>

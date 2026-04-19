@@ -1,759 +1,1456 @@
-```html id="3j9kq1"
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Turismo en Malchinguí</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
+<title>Malchingu&iacute; | Turismo, cultura y leyendas</title>
+<meta name="description" content="Descubre Malchingu&iacute; entre miradores, gastronom&iacute;a, actividades al aire libre y leyendas vivas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <style>
+:root{
+--bg:#f6f0e7;
+--surface:rgba(255, 252, 248, 0.82);
+--surface-strong:rgba(255, 252, 248, 0.96);
+--surface-dark:#13231f;
+--text:#1f2d2a;
+--muted:#5d6b67;
+--line:rgba(34, 61, 55, 0.14);
+--brand:#1f6b57;
+--brand-deep:#164d3f;
+--accent:#d76a3a;
+--accent-soft:#f4d4b6;
+--shadow:0 28px 60px rgba(33, 45, 40, 0.12);
+--radius-xl:30px;
+--radius-lg:22px;
+}
+
+body[data-theme="night"]{
+--bg:#0b1515;
+--surface:rgba(15, 25, 24, 0.8);
+--surface-strong:rgba(16, 27, 26, 0.95);
+--surface-dark:#081110;
+--text:#eef3f0;
+--muted:#b8c6c2;
+--line:rgba(212, 233, 224, 0.1);
+--brand:#5cc6a1;
+--brand-deep:#2f876b;
+--accent:#f49a63;
+--accent-soft:#3b2a1d;
+--shadow:0 28px 60px rgba(0, 0, 0, 0.28);
+}
 
 *{
-margin:0;
-padding:0;
 box-sizing:border-box;
-font-family:Segoe UI,Arial;
+}
+
+html{
 scroll-behavior:smooth;
 }
 
-:root{
---color-principal: #2E7D32;
---color-secundario: #A1887F;
---color-acento: #FFD54F;
---color-fondo: #f4f6f9;
---color-texto: #333;
-}
-
 body{
-background:var(--color-fondo);
-color:var(--color-texto);
-transition:0.4s;
+margin:0;
+font-family:"Manrope", Arial, sans-serif;
+color:var(--text);
+background:
+radial-gradient(circle at top right, rgba(215, 106, 58, 0.18), transparent 32%),
+radial-gradient(circle at bottom left, rgba(31, 107, 87, 0.12), transparent 34%),
+var(--bg);
+transition:background 0.35s ease, color 0.35s ease;
 }
 
-/* DARK MODE */
-
-.dark{
-background:#121212;
-color:white;
-}
-
-.dark nav{
-background:#000;
-}
-
-.dark .card{
-background:#1f1f1f;
-color:white;
-}
-
-/* NAV */
-
-nav{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px 40px;
+body::before{
+content:"";
 position:fixed;
-width:100%;
+inset:0;
+background-image:linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+background-size:36px 36px;
+opacity:0.22;
+pointer-events:none;
+mix-blend-mode:soft-light;
+z-index:0;
+}
+
+img{
+max-width:100%;
+display:block;
+}
+
+a{
+color:inherit;
+}
+
+button,
+input,
+textarea,
+select{
+font:inherit;
+}
+
+.page-shell{
+position:relative;
+z-index:1;
+width:min(1200px, calc(100% - 1.5rem));
+margin:0 auto;
+padding-bottom:2.5rem;
+}
+
+.site-header{
+position:sticky;
 top:0;
-background:rgba(46,125,50,0.8);
-backdrop-filter:blur(6px);
-z-index:1000;
+z-index:20;
+padding-top:1rem;
 }
 
-nav h2{
-color:white;
-}
-
-nav ul{
+.nav{
 display:flex;
-gap:20px;
-list-style:none;
+align-items:center;
+justify-content:space-between;
+gap:1rem;
+padding:0.9rem 1.1rem;
+border:1px solid var(--line);
+border-radius:999px;
+background:rgba(255, 252, 248, 0.72);
+backdrop-filter:blur(16px);
+box-shadow:var(--shadow);
 }
 
-nav a{
-color:white;
+body[data-theme="night"] .nav{
+background:rgba(10, 17, 17, 0.78);
+}
+
+.brand{
+display:inline-flex;
+align-items:center;
+gap:0.7rem;
 text-decoration:none;
-font-weight:bold;
+font-weight:800;
+letter-spacing:0.02em;
 }
 
-nav button{
-padding:8px 14px;
+.brand-mark{
+display:grid;
+place-items:center;
+width:42px;
+height:42px;
+border-radius:14px;
+background:linear-gradient(135deg, var(--brand), var(--accent));
+color:#fff;
+font-family:"Fraunces", Georgia, serif;
+font-size:1.1rem;
+box-shadow:0 16px 30px rgba(31, 107, 87, 0.22);
+}
+
+.nav-links{
+display:flex;
+align-items:center;
+gap:1rem;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+.nav-links a{
+text-decoration:none;
+color:var(--muted);
+font-weight:700;
+font-size:0.95rem;
+}
+
+.nav-links a:hover{
+color:var(--brand);
+}
+
+.theme-toggle,
+.button-primary,
+.button-secondary,
+.map-button,
+.lightbox-close{
 border:none;
-background:var(--color-principal);
-color:white;
-border-radius:5px;
 cursor:pointer;
+transition:transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
 }
 
-/* HERO */
+.theme-toggle{
+padding:0.75rem 1rem;
+border-radius:999px;
+background:rgba(31, 107, 87, 0.12);
+color:var(--text);
+font-weight:700;
+}
+
+.theme-toggle:hover,
+.button-primary:hover,
+.button-secondary:hover,
+.map-button:hover,
+.lightbox-close:hover{
+transform:translateY(-2px);
+}
 
 .hero{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-text-align:center;
-color:white;
 position:relative;
+margin-top:1rem;
+min-height:86vh;
+display:grid;
+align-items:end;
+padding:2rem;
+border-radius:var(--radius-xl);
 overflow:hidden;
-}
-.hero::after{
-content:"";
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.4);
+box-shadow:var(--shadow);
 }
 
 .hero video{
 position:absolute;
+inset:0;
 width:100%;
 height:100%;
 object-fit:cover;
-z-index:-1;
+}
+
+.hero::after{
+content:"";
+position:absolute;
+inset:0;
+background:
+linear-gradient(180deg, rgba(8, 17, 18, 0.1), rgba(8, 17, 18, 0.72)),
+linear-gradient(120deg, rgba(19, 35, 31, 0.8), rgba(215, 106, 58, 0.18));
+}
+
+.hero-card{
+position:relative;
+z-index:1;
+max-width:760px;
+padding:1.6rem;
+border:1px solid rgba(255,255,255,0.18);
+border-radius:28px;
+background:rgba(10, 16, 16, 0.46);
+backdrop-filter:blur(12px);
+color:#fffdf8;
+}
+
+.eyebrow{
+display:inline-flex;
+align-items:center;
+gap:0.55rem;
+padding:0.45rem 0.85rem;
+border-radius:999px;
+background:rgba(255,255,255,0.12);
+font-size:0.86rem;
+font-weight:800;
+letter-spacing:0.11em;
+text-transform:uppercase;
+}
+
+h1,
+h2,
+h3{
+margin:0;
+font-family:"Fraunces", Georgia, serif;
+line-height:1;
 }
 
 .hero h1{
-font-size:70px;
-background:rgba(255,255,255,0.5);
-padding:30px;
-border-radius:10px;
-animation: fadeIn 2s ease;
-color:black;
+margin-top:1rem;
+font-size:clamp(2.8rem, 7vw, 5.8rem);
+max-width:9ch;
 }
+
 .hero p{
-color:black;
-background:rgba(255,255,255,0.4);
-padding:10px;
-border-radius:8px;
-display:inline-block;
-margin-top:10px;
+margin:1rem 0 0;
+font-size:1.14rem;
+line-height:1.7;
+color:rgba(255, 253, 248, 0.88);
 }
 
-.hero button{
-background: var(--color-principal);
-color:white;
-border:none;
-padding:10px 20px;
-border-radius:8px;
-cursor:pointer;
-}
-.dark .hero p{
-color:white;
-background:rgba(0,0,0,0.5);
+.hero-actions{
+display:flex;
+flex-wrap:wrap;
+gap:0.85rem;
+margin-top:1.5rem;
 }
 
-.dark .hero button{
-background: var(--color-acento);
-color:black;
-}
-.dark .hero h1{
-color:white;
-background:rgba(0,0,0,0.5);
-}
-@keyframes fadeIn{
-from{
-opacity:0;
-transform:translateY(-30px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
-}
-/* SECTIONS */
-
-section{
-max-width:1200px;
-margin:auto;
-padding:80px 20px;
+.button-primary,
+.button-secondary,
+.map-button{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+gap:0.55rem;
+padding:0.95rem 1.2rem;
+border-radius:18px;
+text-decoration:none;
+font-weight:800;
 }
 
-h2{
-text-align:center;
-margin-bottom:40px;
-font-size:40px;
+.button-primary{
+background:linear-gradient(135deg, var(--accent), #bc5328);
+color:#fff8f2;
+box-shadow:0 20px 38px rgba(215, 106, 58, 0.22);
 }
 
-/* CARDS */
+.button-secondary,
+.map-button{
+background:rgba(255,255,255,0.1);
+color:#fff;
+border:1px solid rgba(255,255,255,0.16);
+}
 
-.cards{
+.hero-stats{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:25px;
+grid-template-columns:repeat(3, minmax(0, 1fr));
+gap:1rem;
+margin-top:1.7rem;
 }
 
-.card{
-background:white;
-border-radius:15px;
+.hero-stat{
+padding:1rem;
+border-radius:20px;
+background:rgba(255,255,255,0.08);
+border:1px solid rgba(255,255,255,0.12);
+}
+
+.hero-stat span{
+display:block;
+font-size:0.82rem;
+font-weight:800;
+letter-spacing:0.12em;
+text-transform:uppercase;
+color:rgba(255,255,255,0.72);
+}
+
+.hero-stat strong{
+display:block;
+margin-top:0.35rem;
+font-size:1.3rem;
+}
+
+.main-grid{
+display:grid;
+gap:1.2rem;
+margin-top:1.2rem;
+}
+
+.section-card{
+padding:1.45rem;
+border-radius:var(--radius-xl);
+background:var(--surface);
+border:1px solid var(--line);
+box-shadow:var(--shadow);
+backdrop-filter:blur(16px);
+}
+
+.section-heading{
+display:flex;
+justify-content:space-between;
+gap:1rem;
+align-items:end;
+flex-wrap:wrap;
+margin-bottom:1.2rem;
+}
+
+.section-heading p{
+max-width:620px;
+margin:0.55rem 0 0;
+color:var(--muted);
+line-height:1.7;
+}
+
+.eyebrow-plain{
+display:block;
+margin-bottom:0.4rem;
+color:var(--brand);
+font-size:0.84rem;
+font-weight:800;
+letter-spacing:0.12em;
+text-transform:uppercase;
+}
+
+.grid-three,
+.grid-two{
+display:grid;
+gap:1rem;
+}
+
+.grid-three{
+grid-template-columns:repeat(3, minmax(0, 1fr));
+}
+
+.grid-two{
+grid-template-columns:repeat(2, minmax(0, 1fr));
+}
+
+.info-card,
+.feature-card,
+.legend-card,
+.review-card,
+.plan-card{
+padding:1.1rem;
+border-radius:24px;
+background:var(--surface-strong);
+border:1px solid var(--line);
+}
+
+.info-card strong,
+.feature-card strong{
+display:block;
+margin-top:0.7rem;
+font-size:1.5rem;
+font-family:"Fraunces", Georgia, serif;
+}
+
+.info-card p,
+.feature-card p,
+.legend-card p,
+.plan-card p,
+.map-side p{
+margin:0.65rem 0 0;
+color:var(--muted);
+line-height:1.7;
+}
+
+.place-card{
+display:grid;
+grid-template-columns:1.1fr 0.9fr;
+gap:1rem;
+padding:1rem;
+border-radius:26px;
+background:var(--surface-strong);
+border:1px solid var(--line);
 overflow:hidden;
-box-shadow:0 10px 20px rgba(0,0,0,0.1);
-transition:0.4s;
 }
 
-.card:hover{
-transform: translateY(-10px) scale(1.03);
-box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-}
-
-.card img{
-width:100%;
-height:200px;
-object-fit:cover;
-}
-
-.card h3{
-padding:15px;
-}
-
-.card p{
-padding:0 15px 20px;
-}
-
-/* GALERIA */
-
-.galeria{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:15px;
-}
-
-.galeria img{
-width:100%;
-height:220px;
-object-fit:cover;
-border-radius:10px;
-cursor:pointer;
-transition:0.3s;
-}
-
-.galeria img:hover{
-transform:scale(1.05);
-}
-
-/* LIGHTBOX */
-
-#lightbox{
-position:fixed;
-top:0;
-left:0;
+.place-card img,
+.gallery-card img,
+.legend-card img,
+.map-side img{
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.9);
-display:none;
-justify-content:center;
-align-items:center;
+object-fit:cover;
+border-radius:20px;
 }
 
-#lightbox img{
-max-width:90%;
-max-height:90%;
-}
-
-/* MAPA */
-
-#map{
-height:420px;
-border-radius:10px;
-}
-
-/* RESEÑAS */
-
-.review-form{
-max-width:500px;
-margin:auto;
+.place-copy{
 display:flex;
 flex-direction:column;
-gap:10px;
+justify-content:space-between;
+gap:0.85rem;
+}
+
+.place-copy p{
+margin:0;
+color:var(--muted);
+line-height:1.75;
+}
+
+.place-meta{
+display:flex;
+flex-wrap:wrap;
+gap:0.6rem;
+}
+
+.pill{
+display:inline-flex;
+align-items:center;
+padding:0.45rem 0.8rem;
+border-radius:999px;
+background:rgba(31, 107, 87, 0.1);
+color:var(--brand);
+font-size:0.85rem;
+font-weight:800;
+}
+
+.gallery-grid{
+display:grid;
+grid-template-columns:1.4fr 1fr 1fr;
+gap:1rem;
+}
+
+.gallery-card{
+position:relative;
+overflow:hidden;
+border-radius:26px;
+min-height:220px;
+cursor:pointer;
+box-shadow:var(--shadow);
+}
+
+.gallery-card.tall{
+grid-row:span 2;
+min-height:460px;
+}
+
+.gallery-card::after{
+content:attr(data-label);
+position:absolute;
+left:1rem;
+bottom:1rem;
+padding:0.55rem 0.85rem;
+border-radius:999px;
+background:rgba(10, 17, 17, 0.58);
+color:#fff;
+font-size:0.85rem;
+font-weight:700;
+backdrop-filter:blur(10px);
+}
+
+.gallery-card img{
+height:100%;
+transition:transform 0.45s ease;
+}
+
+.gallery-card:hover img{
+transform:scale(1.06);
+}
+
+.map-preview{
+display:grid;
+grid-template-columns:minmax(0, 1.15fr) minmax(280px, 0.85fr);
+gap:1rem;
+align-items:start;
+}
+
+.map-frame{
+min-height:420px;
+border-radius:26px;
+overflow:hidden;
+border:1px solid var(--line);
+}
+
+#map{
+height:100%;
+min-height:420px;
+}
+
+.map-side{
+display:grid;
+gap:1rem;
+}
+
+.map-actions{
+display:flex;
+flex-wrap:wrap;
+gap:0.75rem;
+}
+
+.review-layout{
+display:grid;
+grid-template-columns:minmax(0, 0.95fr) minmax(0, 1.05fr);
+gap:1rem;
+}
+
+.review-form{
+display:grid;
+gap:0.85rem;
+}
+
+.review-form label{
+display:grid;
+gap:0.4rem;
+font-weight:700;
 }
 
 .review-form input,
 .review-form textarea,
 .review-form select{
-padding:10px;
-border-radius:5px;
-border:1px solid #ccc;
+width:100%;
+padding:0.95rem 1rem;
+border-radius:18px;
+border:1px solid var(--line);
+background:var(--surface-strong);
+color:var(--text);
+outline:none;
 }
 
-button{
-margin:10px;
-padding:10px;
-background: var(--color-principal);
-color: white;
-border:none;
-cursor:pointer;
-transition:0.3s;
+.review-form textarea{
+min-height:150px;
+resize:vertical;
 }
 
-button:hover{
-background: var(--color-acento);
-color:black;
-transform:scale(1.05);
-}
-.review{
-background:white;
-padding:15px;
-border-radius:8px;
-margin-top:10px;
+.form-message{
+min-height:1.4rem;
+font-size:0.95rem;
+font-weight:700;
+color:var(--brand);
 }
 
-/* CONTADOR */
+.review-list{
+display:grid;
+gap:0.85rem;
+align-content:start;
+}
 
-#contador{
-font-size:50px;
+.review-card small{
+display:block;
+margin-top:0.45rem;
+color:var(--muted);
+}
+
+.empty-state{
+padding:1.2rem;
+border:1px dashed var(--line);
+border-radius:22px;
+color:var(--muted);
 text-align:center;
 }
 
-/* BOTON ARRIBA */
-
-#topBtn{
-position:fixed;
-bottom:20px;
-left:20px;
-padding:12px;
-background:#00a884;
-color:white;
-border:none;
-border-radius:50%;
-cursor:pointer;
+.visit-grid{
+display:grid;
+grid-template-columns:minmax(0, 0.85fr) minmax(0, 1.15fr);
+gap:1rem;
+align-items:center;
 }
 
-/* WHATSAPP */
+.visit-card{
+padding:1.2rem;
+border-radius:26px;
+background:linear-gradient(135deg, rgba(31, 107, 87, 0.12), rgba(215, 106, 58, 0.12));
+border:1px solid var(--line);
+}
 
-.whatsapp{
-position:fixed;
-bottom:20px;
-right:20px;
-background:#25D366;
-color:white;
-padding:15px;
-border-radius:50%;
+.visit-card strong{
+display:block;
+margin-top:0.65rem;
+font-size:clamp(2.2rem, 5vw, 3.6rem);
+font-family:"Fraunces", Georgia, serif;
+}
+
+.qr-card{
+display:grid;
+grid-template-columns:180px 1fr;
+gap:1rem;
+padding:1rem;
+border-radius:26px;
+background:var(--surface-strong);
+border:1px solid var(--line);
+align-items:center;
+}
+
+.qr-card img{
+width:100%;
+aspect-ratio:1;
+object-fit:cover;
+border-radius:20px;
+background:#fff;
+padding:0.5rem;
+}
+
+.footer{
+padding:1.4rem;
+margin-top:1.2rem;
+border-radius:26px;
+background:var(--surface-dark);
+color:#eef3f0;
+display:flex;
+justify-content:space-between;
+gap:1rem;
+flex-wrap:wrap;
+align-items:center;
+}
+
+.footer a{
+color:#eef3f0;
 text-decoration:none;
-font-size:22px;
+font-weight:700;
 }
 
-/* FOOTER */
-
-footer{
-background:#111;
-color:white;
-text-align:center;
-padding:30px;
-margin-top:40px;
+.lightbox{
+position:fixed;
+inset:0;
+display:grid;
+place-items:center;
+padding:1rem;
+background:rgba(6, 10, 10, 0.82);
+backdrop-filter:blur(12px);
+z-index:40;
 }
 
-/* SCROLL ANIMATION */
+.lightbox[hidden]{
+display:none;
+}
 
-.hidden{
+.lightbox-card{
+width:min(920px, 100%);
+padding:1rem;
+border-radius:28px;
+background:var(--surface-strong);
+border:1px solid var(--line);
+box-shadow:var(--shadow);
+}
+
+.lightbox-card img{
+width:100%;
+max-height:72vh;
+object-fit:contain;
+border-radius:20px;
+background:rgba(0,0,0,0.06);
+}
+
+.lightbox-head{
+display:flex;
+justify-content:space-between;
+gap:1rem;
+align-items:center;
+margin-bottom:0.8rem;
+}
+
+.lightbox-close{
+padding:0.75rem 1rem;
+border-radius:16px;
+background:rgba(31, 107, 87, 0.12);
+color:var(--text);
+font-weight:800;
+}
+
+.reveal{
 opacity:0;
-transform:translateY(40px);
-transition:1s;
+transform:translateY(24px);
+transition:opacity 0.7s ease, transform 0.7s ease;
 }
 
-.show{
+.reveal.visible{
 opacity:1;
 transform:translateY(0);
 }
-@media(max-width:768px){
 
-.hero h1{
-font-size:35px;
-padding:15px;
+@media (max-width: 980px){
+.grid-three,
+.grid-two,
+.map-preview,
+.review-layout,
+.visit-grid,
+.qr-card{
+grid-template-columns:1fr;
 }
 
-nav{
+.gallery-grid{
+grid-template-columns:1fr 1fr;
+}
+
+.gallery-card.tall{
+grid-row:auto;
+min-height:260px;
+}
+
+.hero-stats{
+grid-template-columns:1fr;
+}
+
+.place-card{
+grid-template-columns:1fr;
+}
+
+.nav{
+border-radius:28px;
+}
+}
+
+@media (max-width: 720px){
+.page-shell{
+width:min(100% - 1rem, 1200px);
+}
+
+.nav{
+align-items:flex-start;
+padding:1rem;
+}
+
+.nav,
+.nav-links{
 flex-direction:column;
-gap:10px;
 }
 
-}
-body{
-opacity:0;
-transition:opacity 0.5s ease;
-}
-
-body.visible{
-opacity:1;
+.hero{
+min-height:auto;
+padding:1rem;
 }
 
+.hero-card{
+padding:1.1rem;
+}
+
+.gallery-grid{
+grid-template-columns:1fr;
+}
+
+.section-card{
+padding:1.1rem;
+}
+}
+
+@media (prefers-reduced-motion: reduce){
+html{
+scroll-behavior:auto;
+}
+
+*{
+transition:none !important;
+animation:none !important;
+}
+}
 </style>
 </head>
-
 <body>
 
-<nav>
-<h2>Malchinguí</h2>
-<ul>
-<li><a href="#lugares">Lugares</a></li>
-<li><a href="#restaurantes">Restaurantes</a></li>
-<li><a href="#actividades">Actividades</a></li>
-<li><a href="#galeria">Galería</a></li>
-<li><a href="mapa.html">Mapa</a></li>
-<li><a href="leyendasmalchingui.html">Leyendas Interactivas</a></li>
-</ul>
-<button onclick="darkMode()">🌙</button>
+<div class="page-shell">
+<header class="site-header">
+<nav class="nav">
+<a class="brand" href="#top">
+<span class="brand-mark">M</span>
+<span>Malchingu&iacute;</span>
+</a>
 
+<div class="nav-links">
+<a href="#destino">Destino</a>
+<a href="#lugares">Lugares</a>
+<a href="#sabores">Sabores</a>
+<a href="#mapa">Mapa</a>
+<a href="mapa.html">Ruta completa</a>
+<a href="leyendasmalchingui.html">Leyendas</a>
+</div>
+
+<button class="theme-toggle" id="themeToggle" type="button">Modo noche</button>
 </nav>
-<div style="height:70px;"></div>
+</header>
 
-<div class="hero">
-
- <p>Un destino turístico escondido en Ecuador</p>
-<button onclick="document.getElementById('lugares').scrollIntoView()">Explorar</button> 
-
-<video autoplay muted loop>
-  <source src="https://cdn.coverr.co/videos/coverr-mountain-landscape-1570/1080p.mp4" type="video/mp4">
+<main id="top">
+<section class="hero reveal">
+<video autoplay muted loop playsinline poster="fondaso10.png">
+<source src="dronaso.mp4.mp4" type="video/mp4">
 </video>
 
-<h1>Descubre Malchinguí</h1>
+<div class="hero-card">
+<div class="eyebrow">Turismo andino con identidad propia</div>
+<h1>Descubre Malchingu&iacute; entre altura, cultura y leyendas.</h1>
+<p>
+Muy cerca de Quito, Malchingu&iacute; combina paisajes abiertos, mercados llenos de sabor,
+miradores, caminatas y relatos que siguen vivos en la memoria de su gente.
+</p>
 
+<div class="hero-actions">
+<a class="button-primary" href="#lugares">Planear visita</a>
+<a class="button-secondary" href="mapa.html">Ver c&oacute;mo llegar</a>
+<a class="button-secondary" href="leyendasmalchingui.html">Entrar a las leyendas</a>
 </div>
 
-<section class="hidden">
-<h2>¿Por qué visitar Malchinguí?</h2>
-
-<div class="cards">
-
-<div class="card">
-<h3>🌿 Naturaleza</h3>
-<p>Paisajes únicos y aire puro.</p>
+<div class="hero-stats">
+<div class="hero-stat">
+<span>Tiempo desde Quito</span>
+<strong>45 min</strong>
 </div>
-
-<div class="card">
-<h3>🍲 Gastronomía</h3>
-<p>Comida tradicional y mercados locales.</p>
+<div class="hero-stat">
+<span>Altitud</span>
+<strong>2.400 msnm</strong>
 </div>
-
-<div class="card">
-<h3>👻 Cultura</h3>
-<p>Leyendas y tradiciones ancestrales.</p>
+<div class="hero-stat">
+<span>Experiencia</span>
+<strong>Naturaleza + cultura</strong>
 </div>
-
+</div>
 </div>
 </section>
 
-<section id="lugares" class="hidden">
-<h2>Lugares para visitar</h2>
-<div class="cards">
-
-<div class="card">
-<img src="https://gadmalchingui.gob.ec/wp-content/uploads/2020/07/JERUSALEN1-1110x550.jpg">
-<h3>Bosque Protector Jerusalem</h3>
-<p>Ubicado a 28 km al norte de Quito, en Malchinguí, cantón Pedro Moncayo. Este santuario protege uno de los ecosistemas más valiosos del país: el bosque seco andino.
-
-Aquí se cuida, se conserva y se comparte con los visitantes la increíble biodiversidad de flora y fauna, invitando a familias, estudiantes y viajeros a conectar con la naturaleza y aprender a protegerla.
-
-El Bosque Jerusalem es administrado por el Gobierno Provincial de Pichincha, a través de la Empresa Turística Ciudad Mitad del Mundo, impulsando el turismo responsable y la educación ambiental.
-
-Un espacio para descubrir, aprender y cuidar nuestro planeta.</p>
-
-<a href="https://parquejerusalem.mitaddelmundo.gob.ec/"> Más Información </a> 
+<div class="main-grid">
+<section class="section-card reveal" id="destino">
+<div class="section-heading">
+<div>
+<span class="eyebrow-plain">Por qu&eacute; visitar</span>
+<h2>Un destino peque&ntilde;o que se siente grande</h2>
 </div>
-
-<div class="card">
-<img src="https://static.wixstatic.com/media/8de505_af76d14180864550bc5df929f2a9e914~mv2_d_2016_1512_s_2.jpg/v1/fill/w_403,h_294,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/TURISMO%20FONDO.jpg">
-<h3>Mirador Del Campanario</h3>
-<p>El campanario se encuentra ubicado al final de la meseta más grande de América Latina y que recoge a dos culturas, la Occidental y la Andina, pues en este sitio se encuentran dos sitios muy importantes, el mercado por la Misongeodesica y la Tola construida por los ancestros de la zona para delimitar el Centro del Mundo.
-
-
-En el sitio encontramos mucha flora y fauna y un vista muy hermosa a la Parroquia de Alchipichi, además que se respira un aire puro y muy relajante.
-
+<p>
+La experiencia de Malchingu&iacute; no depende de una sola atracci&oacute;n.
+Se disfruta mejor como un conjunto: paisaje, comida local, aire limpio, caminatas y tradiciones que dejan huella.
 </p>
 </div>
 
+<div class="grid-three">
+<article class="info-card">
+<span class="pill">Naturaleza</span>
+<strong>Miradores y bosque seco andino</strong>
+<p>Ideal para respirar distinto, hacer fotograf&iacute;a, caminar con calma y observar un entorno abierto que cambia con la luz del d&iacute;a.</p>
+</article>
+
+<article class="info-card">
+<span class="pill">Sabores</span>
+<strong>Mercados y cocina cercana</strong>
+<p>Los mercados ofrecen una forma directa de conocer el ritmo local, conversar con la gente y probar comida tradicional sin prisa.</p>
+</article>
+
+<article class="info-card">
+<span class="pill">Memoria</span>
+<strong>Leyendas que siguen contando el lugar</strong>
+<p>Las historias de campanas, almas, duendes y castigos convierten la visita en algo m&aacute;s profundo que una simple parada tur&iacute;stica.</p>
+</article>
 </div>
 </section>
 
-<section id="restaurantes" class="hidden">
-<h2>Restaurantes</h2>
-
-<div class="cards">
-
-<div class="card">
-<img src="mercado.JPEG" width="500">
-<h3>Mercado del parque </h3>
-<p>Es un espacio donde tanto locales como visitantes pueden probar especialidades auténticas, conversar con los vendedores y descubrir recetas que se han transmitido de generación en generación. Además, el ambiente del mercado invita a saborear sus platillos con calma, disfrutando de la experiencia completa de la cultura culinaria del lugar.</p>
+<section class="section-card reveal" id="lugares">
+<div class="section-heading">
+<div>
+<span class="eyebrow-plain">Lugares</span>
+<h2>Paradas que vale la pena recorrer</h2>
+</div>
+<p>Estos espacios ayudan a entender la variedad de Malchingu&iacute;: naturaleza protegida, panoramas amplios y vida cotidiana con identidad propia.</p>
 </div>
 
-<div class="card">
-<img src="mercado2.JPEG" width="500">
-<h3>Mercado las 4 esquinas </h3>
-<p>Los mercados son el corazón de la vida local, donde se mezclan colores, aromas y sabores. El Mercado Central destaca por su gran variedad de frutas, verduras y productos frescos, ofreciendo un espacio vibrante donde los visitantes pueden comprar directamente de los productores y conocer la gastronomía típica.</p>
+<div class="grid-two">
+<article class="place-card">
+<img src="fondaso10.png" alt="Paisaje natural de Malchingu&iacute;" loading="lazy">
+<div class="place-copy">
+<div>
+<h3>Bosque Protector Jerusalem</h3>
+<p>
+Uno de los espacios naturales m&aacute;s valiosos de la zona. Su ecosistema de bosque seco andino ofrece senderos, observaci&oacute;n del paisaje
+y una oportunidad real de conectar con el entorno de manera tranquila y educativa.
+</p>
 </div>
+<div class="place-meta">
+<span class="pill">Naturaleza</span>
+<span class="pill">Caminata</span>
+<span class="pill">Fotograf&iacute;a</span>
+</div>
+</div>
+</article>
 
+<article class="place-card">
+<img src="imagen1.jpg" alt="Vista relacionada con el campanario de Malchingu&iacute;" loading="lazy">
+<div class="place-copy">
+<div>
+<h3>Mirador del Campanario</h3>
+<p>
+Un punto ideal para observar la parroquia y sentir el car&aacute;cter abierto del territorio.
+La visita gana fuerza cuando se combina con las leyendas locales que hablan de campanas perdidas y noches de eco.
+</p>
+</div>
+<div class="place-meta">
+<span class="pill">Mirador</span>
+<span class="pill">Historia oral</span>
+<span class="pill">Atardecer</span>
+</div>
+</div>
+</article>
+
+<article class="place-card">
+<img src="fondaso12.png" alt="Entorno urbano y monta&ntilde;oso de Malchingu&iacute;" loading="lazy">
+<div class="place-copy">
+<div>
+<h3>Centro parroquial y entorno local</h3>
+<p>
+Recorrer el centro permite entender la escala del lugar: comercio cercano, ritmo tranquilo y una vida comunitaria que hace que el viaje se sienta humano, no solo visual.
+</p>
+</div>
+<div class="place-meta">
+<span class="pill">Cultura local</span>
+<span class="pill">Paseo corto</span>
+<span class="pill">Ambiente cotidiano</span>
+</div>
+</div>
+</article>
+
+<article class="place-card">
+<img src="imagen2.jpg" alt="Paisaje de laguna y monta&ntilde;a asociado a la zona" loading="lazy">
+<div class="place-copy">
+<div>
+<h3>Ruta visual hacia Mojanda</h3>
+<p>
+Aunque la experiencia principal est&aacute; en Malchingu&iacute;, los paisajes de la zona y sus relatos vinculados a Mojanda ampl&iacute;an el recorrido con una sensaci&oacute;n m&aacute;s andina y legendaria.
+</p>
+</div>
+<div class="place-meta">
+<span class="pill">Panorama</span>
+<span class="pill">Relato local</span>
+<span class="pill">Ruta ampliada</span>
+</div>
+</div>
+</article>
 </div>
 </section>
 
-<section id="actividades" class="hidden">
-<h2>Actividades</h2>
-
-<div class="cards">
-
-<div class="card">
-<img src="imagen5.JPEG"width="500">
-<h3>Senderismo</h3>
-<p>Malchingui ofrece paisajes impresionantes que invitan a la aventura y al contacto directo con la naturaleza. Sus colinas, bosques y ríos crean un entorno ideal para el senderismo, donde cada ruta permite disfrutar de vistas panorámicas, aire puro y tranquilidad. Es un lugar perfecto tanto para quienes buscan relajarse en la naturaleza como para los aficionados al trekking que desean explorar caminos llenos de belleza y descubrimientos. En Malchingui, cada caminata se convierte en una experiencia única que combina ejercicio, paisaje y serenidad. </p>
+<section class="section-card reveal" id="sabores">
+<div class="section-heading">
+<div>
+<span class="eyebrow-plain">Sabores</span>
+<h2>La cocina local tambi&eacute;n forma parte del viaje</h2>
+</div>
+<p>Los mercados no solo sirven para comer: son espacios para ver c&oacute;mo se mueve la comunidad y sentir el pulso cotidiano del lugar.</p>
 </div>
 
-<div class="card">
-<img src="imagen6.JPEG"width="500">
-<h3>Naturaleza y Aventuras</h3>
-<p>Malchingui es un destino ideal para quienes buscan conectarse con la naturaleza y disfrutar de aventuras al aire libre. Además de sus rutas de senderismo entre colinas, bosques y ríos, ofrece actividades como ciclismo de montaña, observación de aves, campamentos al aire libre, y fotografía de paisajes. Sus valles y miradores brindan escenarios perfectos para paseos tranquilos, mientras que los más aventureros pueden explorar caminos más desafiantes y practicar deportes de aventura. En Malchingui, cada visita se convierte en una experiencia completa de ejercicio, diversión y contacto con la naturaleza.</p>
+<div class="grid-two">
+<article class="place-card">
+<img src="mercado.JPEG" alt="Mercado tradicional del parque" loading="lazy">
+<div class="place-copy">
+<div>
+<h3>Mercado del parque</h3>
+<p>
+Un punto perfecto para acercarse a sabores aut&eacute;nticos, platos caseros y conversaciones sencillas.
+El valor est&aacute; tanto en la comida como en el ambiente de cercan&iacute;a.
+</p>
 </div>
-
+<div class="place-meta">
+<span class="pill">Comida local</span>
+<span class="pill">Ambiente familiar</span>
 </div>
+</div>
+</article>
 
+<article class="place-card">
+<img src="mercado2.JPEG" alt="Mercado de las cuatro esquinas" loading="lazy">
+<div class="place-copy">
+<div>
+<h3>Mercado de las cuatro esquinas</h3>
+<p>
+Colores, productos frescos y movimiento constante. Es una parada sencilla, pero muy eficaz para entender el car&aacute;cter comercial y gastron&oacute;mico de la parroquia.
+</p>
+</div>
+<div class="place-meta">
+<span class="pill">Productos frescos</span>
+<span class="pill">Vida local</span>
+</div>
+</div>
+</article>
+</div>
 </section>
 
-<section id="galeria" class="hidden">
-
-<h2>Galería</h2>
-
-<div class="galeria">
-
-<img src="https://static.wixstatic.com/media/28b640_73764c33fb96437c97db730a8479ecdd~mv2.jpeg/v1/fill/w_1000,h_554,al_c,q_85,usm_0.66_1.00_0.01/28b640_73764c33fb96437c97db730a8479ecdd~mv2.jpeg" onclick="openImg(this.src)">
-<img src="https://ec.viajandox.com/uploads/attractive_450.jpg" onclick="openImg(this.src)">
-<img src="https://lh3.googleusercontent.com/gps-cs-s/AHVAwepwhwypYTTpbarpy1LTffOaMcVf8MvhongCuN5kGC-DZL7e0prsxTIj3GI8RMck_0U0_TLYeY5e2jk40uNWoQvQ33vcYbKU4Ov4AoxVK6BE7lCOrz1XHoQ3quPfReunsZszTYHldw=w540-h312-n-k-no" width="500">
-<img src="imagen2.JPEG" width="500">
-<img src="imagen3.JPEG" width="500">
-<img src="imagen4.JPEG" width="500">
-<img src="https://cdn.pixabay.com/photo/2015/05/19/20/18/ecuador-774257_1280.jpg" onclick="openImg(this.src)">
-<img src="https://lh3.googleusercontent.com/gps-cs-s/AHVAweqte1giUOJUz6r-dg4fFwMVzxN566jICANoQwex_nAe48lGdWYaz6jXnH9K2dObaNJNCDTDimtADTh_9X_N0FsdZj5x6MaVwbPAaoGj3k2B8YHTB3Xbju6DDan3fyskWoLa3w0=w540-h312-n-k-no" onclick="openImg(this.src)">
-
+<section class="section-card reveal" id="actividades">
+<div class="section-heading">
+<div>
+<span class="eyebrow-plain">Actividades</span>
+<h2>Ideas para disfrutar la visita sin apuro</h2>
+</div>
+<p>Malchingu&iacute; funciona muy bien para planes de media jornada o de d&iacute;a completo, especialmente si se mezclan paisaje, comida y un cierre cultural.</p>
 </div>
 
+<div class="grid-three">
+<article class="feature-card">
+<span class="pill">Aire libre</span>
+<strong>Senderismo suave</strong>
+<p>Rutas y recorridos con panoramas amplios que invitan a caminar sin necesidad de una log&iacute;stica complicada.</p>
+</article>
+
+<article class="feature-card">
+<span class="pill">Fotograf&iacute;a</span>
+<strong>Paisaje y memoria visual</strong>
+<p>La combinaci&oacute;n de cerros, cielos abiertos, mercados y texturas urbanas genera escenas muy fotog&eacute;nicas.</p>
+</article>
+
+<article class="feature-card">
+<span class="pill">Cultura</span>
+<strong>Ruta de leyendas</strong>
+<p>El mejor cierre del recorrido es entrar a la experiencia interactiva y conectar los espacios reales con las historias del lugar.</p>
+</article>
+</div>
 </section>
-<section>
-<section id="leyendas" class="hidden">
-<h2>Leyendas de Malchinguí 👻</h2>
 
-<div class="cards">
-
-<div class="card">
-<img src="https://static.wixstatic.com/media/8de505_af76d14180864550bc5df929f2a9e914~mv2_d_2016_1512_s_2.jpg/v1/fill/w_403,h_294,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/TURISMO%20FONDO.jpg">
-<h3>El Campanario</h3>
-<p>Una campana traída con esfuerzo desapareció misteriosamente en la noche. Dicen que el maligno la llevó y aún hoy, en luna llena, se escuchan sus campanadas en la montaña.</p>
+<section class="section-card reveal" id="galeria">
+<div class="section-heading">
+<div>
+<span class="eyebrow-plain">Galer&iacute;a</span>
+<h2>Un vistazo r&aacute;pido al ambiente de Malchingu&iacute;</h2>
+</div>
+<p>Toca cualquier imagen para verla en grande. La galer&iacute;a combina naturaleza, vida cotidiana y rincones que construyen la identidad del lugar.</p>
 </div>
 
-<div class="card">
-<img src="https://buentrip.app/panel/files/attractions/5389fa91a4a84d9b2bf8284416a6c08d_lg.jpg">
-<h3>Las Lagunas de Mojanda</h3>
-<p>Una pareja rica negó ayuda a un mendigo que en realidad era Dios. Como castigo, todo fue destruido y convertido en agua, dando origen a las lagunas.</p>
+<div class="gallery-grid">
+<figure class="gallery-card tall" data-label="Paisaje abierto">
+<img src="fondaso17.png" alt="Vista amplia del paisaje de Malchingu&iacute;" loading="lazy" data-lightbox>
+</figure>
+<figure class="gallery-card" data-label="Mercado local">
+<img src="mercado.JPEG" alt="Puesto de mercado en Malchingu&iacute;" loading="lazy" data-lightbox>
+</figure>
+<figure class="gallery-card" data-label="Ruta andina">
+<img src="imagen5.jpg" alt="Ruta natural en la zona de Malchingu&iacute;" loading="lazy" data-lightbox>
+</figure>
+<figure class="gallery-card" data-label="Vida diaria">
+<img src="mercado2.JPEG" alt="Escena cotidiana en el mercado" loading="lazy" data-lightbox>
+</figure>
+<figure class="gallery-card" data-label="Memoria del lugar">
+<img src="imagen4.jpg" alt="Imagen asociada a las historias de Malchingu&iacute;" loading="lazy" data-lightbox>
+</figure>
+</div>
+</section>
+
+<section class="section-card reveal" id="leyendas">
+<div class="section-heading">
+<div>
+<span class="eyebrow-plain">Leyendas</span>
+<h2>La parte m&aacute;s memorable del viaje puede empezar aqu&iacute;</h2>
+</div>
+<p>Estas historias le dan car&aacute;cter a Malchingu&iacute;. La nueva experiencia interactiva convierte la visita en un recorrido con decisiones, desbloqueos y archivo narrativo.</p>
 </div>
 
-<div class="card">
-<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdUSlNfxkneiG841T7dZgl28dNZ9VhFdwgFA&s">
+<div class="grid-three">
+<article class="legend-card">
+<img src="imagen1.jpg" alt="Leyenda del campanario" loading="lazy">
+<h3>Leyenda del campanario</h3>
+<p>Una campana desaparecida sigue resonando en la memoria del pueblo y en la imaginaci&oacute;n de quienes la buscan.</p>
+</article>
+
+<article class="legend-card">
+<img src="imagen2.jpg" alt="Lagunas de Mojanda" loading="lazy">
+<h3>Las lagunas de Mojanda</h3>
+<p>Un relato de orgullo, castigo y paisaje que transforma el territorio en una advertencia viva.</p>
+</article>
+
+<article class="legend-card">
+<img src="imagen5.jpg" alt="El Animero" loading="lazy">
 <h3>El Animero</h3>
-<p>Un joven castigado debía recorrer el pueblo de noche con una calavera y una campana. Las almas lo seguían y quienes lo veían caían en terror.</p>
+<p>Una presencia nocturna que mezcla penitencia, miedo y respeto por lo que no se debe desafiar.</p>
+</article>
 </div>
 
-<div class="card">
-<img src="https://i.pinimg.com/736x/88/ec/ee/88ecee4101e3fdda449ad6da9cfa6592.jpg">
-<h3>El Hombre y el Diablo</h3>
-<p>Juan fue llevado por el diablo a trabajar en una cueva de oro, pero su destino cambió cuando no logró servirle. Nadie sabe si su historia es real…</p>
+<div class="hero-actions" style="margin-top:1.2rem;">
+<a class="button-primary" href="leyendasmalchingui.html">Explorar experiencia interactiva</a>
 </div>
-
-<div class="card">
-<img src="https://www.cervantesvirtual.com/s3/BVMC_OBRAS/025/66e/148/2b2/11d/fac/c70/021/85c/e60/64/mimes/imagenes/02566e14-82b2-11df-acc7-002185ce6064_30.jpg">
-<h3>La Escuela</h3>
-<p>Un anciano misterioso convirtió a los niños en animales como castigo divino. Luego desapareció… y nunca volvió a la escuela.</p>
-</div>
-
-</div>
-
-<br>
-
-<a href="leyendasmalchingui.html">
-<button>👻 Explorar experiencia interactiva </button>
-</a>
-
 </section>
 
+<section class="section-card reveal" id="mapa">
+<div class="section-heading">
+<div>
+<span class="eyebrow-plain">Mapa</span>
+<h2>Ubicaci&oacute;n referencial para organizar tu salida</h2>
+</div>
+<p>Este mapa muestra una referencia visual entre Quito y Malchingu&iacute;. Para una vista m&aacute;s completa, puedes abrir la p&aacute;gina dedicada al recorrido.</p>
+</div>
 
+<div class="map-preview">
+<div class="map-frame">
+<div id="map" aria-label="Mapa de ubicaci&oacute;n referencial de Malchingu&iacute;"></div>
+</div>
 
-<section id="mapa" class="hidden">
+<div class="map-side">
+<article class="plan-card">
+<h3>Ruta sugerida</h3>
+<p>Salida desde Quito, trayecto corto por carretera y llegada a un entorno de aire limpio, paisaje abierto y ritmo tranquilo.</p>
+<div class="map-actions" style="margin-top:0.9rem;">
+<button class="map-button" id="routeView" type="button">Ver ruta</button>
+<button class="map-button" id="focusTown" type="button">Centrar Malchingu&iacute;</button>
+<a class="map-button" href="mapa.html">Abrir mapa completo</a>
+</div>
+</article>
 
-<h2>Ubicación</h2>
+<article class="plan-card">
+<h3>Plan r&aacute;pido</h3>
+<p>Mirador o bosque, mercado para almorzar, paseo por el centro y cierre con la experiencia de leyendas.</p>
+</article>
 
-<div id="map"></div>
-
+<article class="plan-card">
+<h3>Recomendaci&oacute;n</h3>
+<p>El sitio funciona especialmente bien con ropa c&oacute;moda, bater&iacute;a cargada para fotos y tiempo suficiente para quedarse un poco m&aacute;s de lo planeado.</p>
+</article>
+</div>
+</div>
 </section>
 
-<section class="hidden">
+<section class="section-card reveal" id="opiniones">
+<div class="section-heading">
+<div>
+<span class="eyebrow-plain">Rese&ntilde;as</span>
+<h2>Comparte tu experiencia</h2>
+</div>
+<p>Las rese&ntilde;as se guardan solo en este navegador para que puedas usar la p&aacute;gina como una bit&aacute;cora sencilla del proyecto.</p>
+</div>
 
-<h2>Visitantes</h2>
+<div class="review-layout">
+<form class="review-form" id="reviewForm">
+<label for="reviewName">
+Nombre
+<input id="reviewName" name="reviewName" type="text" maxlength="40" placeholder="Tu nombre">
+</label>
 
-<h1 id="contador"></h1>
-
-</section>
-
-<section class="hidden">
-
-<h2>Reseñas</h2>
-
-<div class="review-form">
-
-<input id="name" placeholder="Tu nombre">
-
-<select id="stars">
-<option>⭐</option>
-<option>⭐⭐</option>
-<option>⭐⭐⭐</option>
-<option>⭐⭐⭐⭐</option>
-<option>⭐⭐⭐⭐⭐</option>
+<label for="reviewStars">
+Valoraci&oacute;n
+<select id="reviewStars" name="reviewStars">
+<option value="5 estrellas">5 estrellas</option>
+<option value="4 estrellas">4 estrellas</option>
+<option value="3 estrellas">3 estrellas</option>
+<option value="2 estrellas">2 estrellas</option>
+<option value="1 estrella">1 estrella</option>
 </select>
+</label>
 
-<textarea id="text" placeholder="Escribe tu experiencia"></textarea>
+<label for="reviewText">
+Comentario
+<textarea id="reviewText" name="reviewText" maxlength="320" placeholder="Cu&eacute;ntanos c&oacute;mo fue tu visita"></textarea>
+</label>
 
-<button onclick="addReview()">Enviar</button>
+<button class="button-primary" type="submit">Guardar rese&ntilde;a</button>
+<div class="form-message" id="formMessage" aria-live="polite"></div>
+</form>
 
-<div id="reviewsList"></div>
+<div class="review-list" id="reviewList"></div>
+</div>
+</section>
 
+<section class="section-card reveal" id="visita">
+<div class="section-heading">
+<div>
+<span class="eyebrow-plain">Acceso</span>
+<h2>Lleva la experiencia en el tel&eacute;fono</h2>
+</div>
+<p>El proyecto tambi&eacute;n puede abrirse desde otros dispositivos. El QR es una forma r&aacute;pida de compartirlo durante presentaciones o recorridos guiados.</p>
 </div>
 
+<div class="visit-grid">
+<article class="visit-card">
+<span class="pill">Visitas registradas en este navegador</span>
+<strong id="visitCount">0</strong>
+<p>Cada carga de esta p&aacute;gina suma una visita local. Sirve como referencia simple para demostraciones y pruebas del proyecto.</p>
+</article>
+
+<article class="qr-card">
+<img src="qr.png" alt="C&oacute;digo QR del proyecto" loading="lazy">
+<div>
+<h3>Comparte el sitio</h3>
+<p>Escanea el c&oacute;digo para abrir el proyecto desde otro dispositivo y recorrer mapa, turismo y leyendas sin buscar la direcci&oacute;n manualmente.</p>
+<div class="hero-actions" style="margin-top:1rem;">
+<a class="button-secondary" href="mapa.html">Abrir mapa</a>
+<a class="button-secondary" href="leyendasmalchingui.html">Abrir leyendas</a>
+</div>
+</div>
+</article>
+</div>
 </section>
+</div>
+</main>
 
-<section class="hidden">
-<h2>Accede al proyecto</h2>
-<p>Escanea el código QR para abrir la página desde cualquier dispositivo</p>
-<img src="qr.png" width="200">
-</section>
-
-<footer>
-
-<p>Turismo en Malchinguí - Proyecto Web</p>
-
+<footer class="footer">
+<div>
+<strong>Malchingu&iacute; | Proyecto tur&iacute;stico web</strong>
+<p style="margin:0.35rem 0 0; color:rgba(238,243,240,0.72);">Naturaleza, gastronom&iacute;a, rutas y leyendas presentadas en una experiencia m&aacute;s clara y visual.</p>
+</div>
+<div style="display:flex; gap:1rem; flex-wrap:wrap;">
+<a href="mapa.html">Mapa completo</a>
+<a href="leyendasmalchingui.html">Leyendas interactivas</a>
+</div>
 </footer>
-
-<button id="topBtn" onclick="topFunction()">⬆</button>
-
-<a class="whatsapp" href="https://wa.me/593980208508">💬</a>
-
-<div id="lightbox" onclick="closeImg()">
-<img id="lightbox-img">
 </div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<div class="lightbox" id="lightbox" hidden>
+<div class="lightbox-card">
+<div class="lightbox-head">
+<strong id="lightboxTitle">Galer&iacute;a</strong>
+<button class="lightbox-close" id="lightboxClose" type="button">Cerrar</button>
+</div>
+<img id="lightboxImage" src="fondaso10.png" alt="Vista ampliada de la galer&iacute;a">
+</div>
+</div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
+const REVIEW_KEY = "malchingui-reviews-v2";
+const VISIT_KEY = "malchingui-visits-v2";
+const THEME_KEY = "malchingui-theme-v2";
 
-/* DARK MODE */
+const refs = {
+themeToggle: document.getElementById("themeToggle"),
+visitCount: document.getElementById("visitCount"),
+reviewForm: document.getElementById("reviewForm"),
+reviewList: document.getElementById("reviewList"),
+reviewName: document.getElementById("reviewName"),
+reviewStars: document.getElementById("reviewStars"),
+reviewText: document.getElementById("reviewText"),
+formMessage: document.getElementById("formMessage"),
+lightbox: document.getElementById("lightbox"),
+lightboxImage: document.getElementById("lightboxImage"),
+lightboxTitle: document.getElementById("lightboxTitle"),
+lightboxClose: document.getElementById("lightboxClose"),
+routeView: document.getElementById("routeView"),
+focusTown: document.getElementById("focusTown")
+};
 
-function darkMode(){
-document.body.classList.toggle("dark")
+function applyTheme(theme) {
+document.body.dataset.theme = theme;
+refs.themeToggle.textContent = theme === "night" ? "Modo d\u00eda" : "Modo noche";
+localStorage.setItem(THEME_KEY, theme);
 }
 
-/* MAPA */
-
-var map = L.map('map').setView([-0.0046,-78.4053],10);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-var malchingui = L.marker([-0.0046,-78.4053]).addTo(map)
-.bindPopup("Malchingüí");
-
-var quito = L.marker([-0.1807,-78.4678]).addTo(map)
-.bindPopup("Quito");
-
-var ruta = L.polyline([
-[-0.1807,-78.4678],
-[-0.0046,-78.4053]
-],{color:"red"}).addTo(map);
-
-map.fitBounds(ruta.getBounds());
-
-/* RESEÑAS */
-
-function addReview(){
-
-let name=document.getElementById("name").value
-let text=document.getElementById("text").value
-let stars=document.getElementById("stars").value
-
-let review=document.createElement("div")
-
-review.className="review"
-
-review.innerHTML="<b>"+name+"</b> "+stars+"<p>"+text+"</p>"
-
-document.getElementById("reviewsList").appendChild(review)
-
+function loadTheme() {
+const savedTheme = localStorage.getItem(THEME_KEY);
+applyTheme(savedTheme === "night" ? "night" : "day");
 }
 
-/* GALERIA */
-
-function openImg(src){
-document.getElementById("lightbox").style.display="flex"
-document.getElementById("lightbox-img").src=src
+function incrementVisits() {
+const current = Number.parseInt(localStorage.getItem(VISIT_KEY), 10) || 0;
+const nextValue = current + 1;
+localStorage.setItem(VISIT_KEY, String(nextValue));
+refs.visitCount.textContent = new Intl.NumberFormat("es-EC").format(nextValue);
 }
 
-function closeImg(){
-document.getElementById("lightbox").style.display="none"
+function loadReviews() {
+try {
+const saved = JSON.parse(localStorage.getItem(REVIEW_KEY));
+return Array.isArray(saved) ? saved : [];
+} catch (error) {
+return [];
+}
 }
 
-/* CONTADOR */
-
-let count = localStorage.getItem("visitas")
-
-if(!count){count=0}
-
-count++
-
-localStorage.setItem("visitas",count)
-
-document.getElementById("contador").innerText=count
-
-/* BOTON ARRIBA */
-
-function topFunction(){
-window.scrollTo({top:0,behavior:"smooth"})
+function saveReviews(reviews) {
+localStorage.setItem(REVIEW_KEY, JSON.stringify(reviews));
 }
 
-/* SCROLL ANIMATION */
+function createReviewElement(review) {
+const article = document.createElement("article");
+article.className = "review-card";
 
-const observer = new IntersectionObserver(entries=>{
-entries.forEach(entry=>{
-if(entry.isIntersecting){
-entry.target.classList.add("show")
+const heading = document.createElement("h3");
+heading.textContent = review.name;
+
+const rating = document.createElement("strong");
+rating.style.display = "block";
+rating.style.marginTop = "0.55rem";
+rating.textContent = review.stars;
+
+const text = document.createElement("p");
+text.textContent = review.text;
+
+const date = document.createElement("small");
+date.textContent = review.date;
+
+article.append(heading, rating, text, date);
+return article;
 }
-})
-})
 
-document.querySelectorAll(".hidden").forEach(el=>{
-observer.observe(el)
-})
-window.addEventListener("scroll", ()=>{
-  const nav = document.querySelector("nav");
+function renderReviews() {
+const reviews = loadReviews();
+refs.reviewList.replaceChildren();
 
-  if(window.scrollY > 50){
-    nav.style.background = "rgba(0,0,0,0.9)";
-  } else {
-    nav.style.background = "rgba(0,0,0,0.5)";
-  }
+if (!reviews.length) {
+const empty = document.createElement("div");
+empty.className = "empty-state";
+empty.textContent = "Todav\u00eda no hay rese\u00f1as guardadas en este navegador.";
+refs.reviewList.appendChild(empty);
+return;
+}
+
+reviews.slice().reverse().forEach((review) => {
+refs.reviewList.appendChild(createReviewElement(review));
 });
+}
+
+function showFormMessage(message) {
+refs.formMessage.textContent = message;
+}
+
+refs.reviewForm.addEventListener("submit", (event) => {
+event.preventDefault();
+
+const name = refs.reviewName.value.trim();
+const stars = refs.reviewStars.value;
+const text = refs.reviewText.value.trim();
+
+if (!name || !text) {
+showFormMessage("Completa tu nombre y comentario para guardar la rese\u00f1a.");
+return;
+}
+
+const reviews = loadReviews();
+reviews.push({
+name,
+stars,
+text,
+date: new Date().toLocaleDateString("es-EC", {
+day: "2-digit",
+month: "short",
+year: "numeric"
+})
+});
+
+saveReviews(reviews);
+refs.reviewForm.reset();
+renderReviews();
+showFormMessage("Rese\u00f1a guardada correctamente.");
+});
+
+function openLightbox(src, label) {
+refs.lightboxImage.src = src;
+refs.lightboxTitle.textContent = label || "Galer\u00eda";
+refs.lightbox.hidden = false;
+document.body.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+refs.lightbox.hidden = true;
+document.body.style.overflow = "";
+}
+
+document.querySelectorAll("[data-lightbox]").forEach((image) => {
+image.addEventListener("click", () => {
+const label = image.closest(".gallery-card")?.dataset.label || image.alt;
+openLightbox(image.currentSrc || image.src, label);
+});
+});
+
+refs.lightboxClose.addEventListener("click", closeLightbox);
+refs.lightbox.addEventListener("click", (event) => {
+if (event.target === refs.lightbox) {
+closeLightbox();
+}
+});
+
+document.addEventListener("keydown", (event) => {
+if (event.key === "Escape" && !refs.lightbox.hidden) {
+closeLightbox();
+}
+});
+
+refs.themeToggle.addEventListener("click", () => {
+const nextTheme = document.body.dataset.theme === "night" ? "day" : "night";
+applyTheme(nextTheme);
+});
+
+const map = L.map("map", {
+scrollWheelZoom: false
+}).setView([-0.06, -78.44], 10);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+maxZoom: 19,
+attribution: "&copy; OpenStreetMap"
+}).addTo(map);
+
+const quito = L.marker([-0.1807, -78.4678]).addTo(map).bindPopup("Quito");
+const malchingui = L.marker([-0.0046, -78.4053]).addTo(map).bindPopup("Malchingu\u00ed");
+
+const route = L.polyline([
+[-0.1807, -78.4678],
+[-0.11, -78.445],
+[-0.0046, -78.4053]
+], {
+color: "#d76a3a",
+weight: 5,
+opacity: 0.88,
+dashArray: "10 8"
+}).addTo(map);
+
+map.fitBounds(route.getBounds(), { padding: [30, 30] });
+
+refs.routeView.addEventListener("click", () => {
+map.fitBounds(route.getBounds(), { padding: [40, 40] });
+});
+
+refs.focusTown.addEventListener("click", () => {
+map.setView([-0.0046, -78.4053], 13);
+malchingui.openPopup();
+});
+
+const observer = new IntersectionObserver((entries) => {
+entries.forEach((entry) => {
+if (entry.isIntersecting) {
+entry.target.classList.add("visible");
+}
+});
+}, {
+threshold: 0.16
+});
+
+document.querySelectorAll(".reveal").forEach((element) => {
+observer.observe(element);
+});
+
+loadTheme();
+incrementVisits();
+renderReviews();
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", ()=>{
-document.body.classList.add("visible");
-});
 
-document.querySelectorAll("a").forEach(link=>{
-link.addEventListener("click", function(e){
-if(this.href){
-e.preventDefault();
-document.body.classList.remove("visible");
-setTimeout(()=>{
-window.location=this.href;
-},500);
-}
-});
-});
-</script>
 </body>
 </html>
-```

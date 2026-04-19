@@ -2,333 +2,1147 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Leyendas Oscuras</title>
-
-<link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leyendas de Malchinguí</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Cormorant+Garamond:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+:root{
+--bg:#07060b;
+--panel:rgba(10, 9, 18, 0.84);
+--panel-strong:rgba(14, 12, 24, 0.95);
+--border:rgba(255, 122, 80, 0.42);
+--border-soft:rgba(243, 209, 169, 0.18);
+--text:#f6ead8;
+--muted:#ccb9a4;
+--accent:#f06449;
+--accent-soft:#ffcf99;
+--danger:#f94144;
+--success:#98c379;
+--shadow:0 24px 70px rgba(0, 0, 0, 0.45);
+}
+
+*{
+box-sizing:border-box;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
 body{
 margin:0;
-font-family:serif;
-color:#e6d3a3;
+min-height:100vh;
+font-family:"Cormorant Garamond", Georgia, serif;
+color:var(--text);
+background:var(--bg);
+overflow-x:hidden;
+}
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+linear-gradient(180deg, rgba(6, 5, 12, 0.16), rgba(6, 5, 12, 0.9)),
+radial-gradient(circle at top, rgba(255, 124, 83, 0.15), transparent 42%),
+radial-gradient(circle at bottom, rgba(255, 207, 153, 0.12), transparent 32%);
+pointer-events:none;
+z-index:0;
+}
+
+body.admin-mode{
+--accent:#8ac926;
+--accent-soft:#d8f7a2;
+--border:rgba(138, 201, 38, 0.35);
+}
+
+body.modal-open{
 overflow:hidden;
 }
 
-/* VIDEO FULL */
-video{
+.background-video{
 position:fixed;
-top:0;
-left:0;
-width:100vw;
-height:100vh;
-object-fit:cover;
-z-index:-1;
-filter:brightness(30%);
-}
-
-/* TITULO */
-h1{
-text-align:center;
-font-family:'UnifrakturCook';
-font-size:50px;
-color:red;
-text-shadow:0 0 20px red;
-cursor:pointer;
-}
-
-/* PANEL */
-#game,#menuLeyendas,#detalleLeyenda{
-width:80%;
-max-width:800px;
-margin:20px auto;
-background:rgba(0,0,0,0.85);
-padding:20px;
-border:1px solid red;
-box-shadow:0 0 20px red;
-text-align:center;
-}
-
-/* BOTONES */
-button{
-margin:10px;
-padding:10px;
-background:black;
-color:red;
-border:1px solid #533687;
-cursor:pointer;
-}
-button:hover{background:red;color:black;}
-
-/* IMAGEN */
-#detalleLeyenda img{
-width:100%;
-max-height:300px;
-object-fit:cover;
-border:1px solid red;
-}
-
-/* EFECTO DESBLOQUEO */
-.desbloqueo{
-animation:glow 1s infinite;
-}
-@keyframes glow{
-0%{box-shadow:0 0 5px red;}
-50%{box-shadow:0 0 25px red;}
-100%{box-shadow:0 0 5px red;}
-}
-
-/* 👁️ MODO OSCURO */
-.modoOscuro{
-filter:contrast(1.5) brightness(0.5);
-animation:glitch 0.2s infinite;
-}
-@keyframes glitch{
-0%{transform:translate(0);}
-25%{transform:translate(2px,-2px);}
-50%{transform:translate(-2px,2px);}
-75%{transform:translate(1px,-1px);}
-100%{transform:translate(0);}
-}
-
-/* MENSAJE */
-#mensajeOculto{
-position:fixed;
-top:40%;
-width:100%;
-text-align:center;
-font-size:40px;
-color:red;
-font-family:'UnifrakturCook';
-display:none;
-z-index:999;
-}
-
-/* SUSTO */
-#susto{
-position:fixed;
-top:0;
-left:0;
+inset:0;
 width:100%;
 height:100%;
-background:url('https://i.imgur.com/8QZ7Z6V.png') center/cover;
+object-fit:cover;
+filter:brightness(0.28) saturate(0.85);
+z-index:-2;
+}
+
+.page-shell{
+position:relative;
+z-index:1;
+width:min(1200px, calc(100% - 2rem));
+margin:0 auto;
+padding:1.25rem 0 2.5rem;
+}
+
+.back-link{
+display:inline-flex;
+align-items:center;
+gap:0.45rem;
+padding:0.8rem 1.1rem;
+margin-bottom:1.2rem;
+border:1px solid var(--border);
+border-radius:999px;
+background:rgba(10, 9, 18, 0.66);
+color:var(--text);
+text-decoration:none;
+backdrop-filter:blur(8px);
+transition:transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.back-link:hover{
+transform:translateY(-2px);
+border-color:var(--accent);
+background:rgba(15, 13, 24, 0.82);
+}
+
+.hero{
+padding:2.2rem;
+border:1px solid var(--border);
+border-radius:30px;
+background:linear-gradient(135deg, rgba(9, 8, 14, 0.72), rgba(16, 13, 26, 0.9));
+box-shadow:var(--shadow);
+backdrop-filter:blur(12px);
+overflow:hidden;
+}
+
+.hero::after{
+content:"";
+position:absolute;
+inset:auto -12% -22% auto;
+width:280px;
+height:280px;
+background:radial-gradient(circle, rgba(240, 100, 73, 0.22), transparent 65%);
+filter:blur(8px);
+pointer-events:none;
+}
+
+.hero,
+.panel{
+position:relative;
+}
+
+.eyebrow{
+display:inline-flex;
+align-items:center;
+gap:0.55rem;
+padding:0.45rem 0.85rem;
+border-radius:999px;
+background:rgba(255, 255, 255, 0.05);
+border:1px solid var(--border-soft);
+color:var(--accent-soft);
+font-size:0.95rem;
+letter-spacing:0.08em;
+text-transform:uppercase;
+}
+
+h1,
+h2,
+h3{
+margin:0;
+font-family:"Cinzel", "Times New Roman", serif;
+letter-spacing:0.03em;
+}
+
+.hero h1{
+margin-top:1.2rem;
+font-size:clamp(2.5rem, 6vw, 4.8rem);
+line-height:0.98;
+text-shadow:0 0 24px rgba(240, 100, 73, 0.28);
+cursor:pointer;
+}
+
+.hero p{
+max-width:780px;
+margin:1rem 0 0;
+font-size:1.35rem;
+line-height:1.55;
+color:var(--muted);
+}
+
+.hero-actions{
+display:flex;
+flex-wrap:wrap;
+gap:0.85rem;
+margin-top:1.5rem;
+}
+
+.status-strip{
+display:grid;
+grid-template-columns:repeat(3, minmax(0, 1fr));
+gap:1rem;
+margin-top:1.75rem;
+}
+
+.status-card{
+padding:1rem 1.1rem;
+border-radius:22px;
+background:rgba(255, 255, 255, 0.05);
+border:1px solid var(--border-soft);
+}
+
+.status-card span{
+display:block;
+font-size:0.92rem;
+color:var(--muted);
+text-transform:uppercase;
+letter-spacing:0.09em;
+}
+
+.status-card strong{
+display:block;
+margin-top:0.3rem;
+font-size:1.45rem;
+}
+
+.layout{
+display:grid;
+grid-template-columns:minmax(0, 1.15fr) minmax(320px, 0.85fr);
+gap:1.35rem;
+margin-top:1.5rem;
+align-items:start;
+}
+
+.panel{
+padding:1.55rem;
+border-radius:28px;
+background:var(--panel);
+border:1px solid var(--border);
+box-shadow:var(--shadow);
+backdrop-filter:blur(12px);
+}
+
+.panel-head{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:1rem;
+margin-bottom:1.1rem;
+}
+
+.panel-head p{
+margin:0.45rem 0 0;
+color:var(--muted);
+font-size:1.1rem;
+line-height:1.45;
+}
+
+.scene-badge{
+padding:0.45rem 0.8rem;
+border-radius:999px;
+background:rgba(240, 100, 73, 0.14);
+border:1px solid rgba(240, 100, 73, 0.2);
+font-size:0.95rem;
+white-space:nowrap;
+}
+
+.story-card,
+.progress-card,
+.tips-card{
+padding:1.15rem;
+border-radius:22px;
+background:var(--panel-strong);
+border:1px solid var(--border-soft);
+}
+
+.story-label{
+margin:0;
+font-size:0.95rem;
+letter-spacing:0.12em;
+text-transform:uppercase;
+color:var(--accent-soft);
+}
+
+#sceneTitle{
+margin-top:0.55rem;
+font-size:1.6rem;
+}
+
+#texto{
+margin:0.85rem 0 0;
+font-size:1.28rem;
+line-height:1.6;
+color:var(--text);
+}
+
+.choice-grid{
+display:grid;
+gap:0.8rem;
+margin-top:1.3rem;
+}
+
+button{
+font:inherit;
+}
+
+.choice-button,
+.primary-button,
+.secondary-button,
+.ghost-button,
+.legend-button,
+.close-button{
+cursor:pointer;
+border:none;
+border-radius:18px;
+transition:transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease, color 0.22s ease;
+}
+
+.choice-button,
+.primary-button{
+padding:0.9rem 1.1rem;
+background:linear-gradient(135deg, var(--accent), #cc503d);
+color:#fff9f1;
+box-shadow:0 18px 35px rgba(240, 100, 73, 0.22);
+}
+
+.choice-button:hover,
+.primary-button:hover,
+.secondary-button:hover,
+.ghost-button:hover,
+.legend-button:hover,
+.close-button:hover{
+transform:translateY(-2px);
+}
+
+.secondary-button,
+.ghost-button{
+padding:0.9rem 1.1rem;
+background:rgba(255, 255, 255, 0.04);
+color:var(--text);
+border:1px solid var(--border-soft);
+}
+
+.ghost-button{
+background:transparent;
+}
+
+.actions-row{
+display:flex;
+flex-wrap:wrap;
+gap:0.75rem;
+margin-top:1rem;
+}
+
+.tips-card{
+margin-top:1rem;
+}
+
+.tips-card h3{
+font-size:1.05rem;
+}
+
+.tips-card ul{
+padding-left:1.15rem;
+margin:0.75rem 0 0;
+color:var(--muted);
+font-size:1.1rem;
+line-height:1.5;
+}
+
+.progress-card p{
+margin:0.9rem 0 0;
+font-size:1.12rem;
+line-height:1.45;
+color:var(--muted);
+}
+
+.progress-label{
+display:flex;
+justify-content:space-between;
+gap:1rem;
+font-size:1.12rem;
+}
+
+.progress-track{
+position:relative;
+width:100%;
+height:14px;
+margin-top:0.85rem;
+border-radius:999px;
+background:rgba(255, 255, 255, 0.08);
+overflow:hidden;
+}
+
+.progress-fill{
+display:block;
+height:100%;
+width:0;
+border-radius:inherit;
+background:linear-gradient(90deg, var(--accent), var(--accent-soft));
+transition:width 0.35s ease;
+}
+
+.legend-grid{
+display:grid;
+gap:0.85rem;
+margin-top:1rem;
+}
+
+.legend-card{
+padding:1rem;
+border-radius:22px;
+background:rgba(255, 255, 255, 0.04);
+border:1px solid var(--border-soft);
+}
+
+.legend-card h3{
+font-size:1.1rem;
+}
+
+.legend-card p{
+margin:0.45rem 0 0;
+font-size:1.05rem;
+line-height:1.45;
+color:var(--muted);
+}
+
+.legend-card.locked{
+opacity:0.72;
+}
+
+.legend-state{
+display:inline-flex;
+align-items:center;
+gap:0.4rem;
+margin-bottom:0.65rem;
+padding:0.3rem 0.65rem;
+border-radius:999px;
+font-size:0.88rem;
+text-transform:uppercase;
+letter-spacing:0.08em;
+background:rgba(255, 255, 255, 0.05);
+color:var(--accent-soft);
+}
+
+.legend-button{
+width:100%;
+margin-top:0.9rem;
+padding:0.85rem 1rem;
+background:rgba(255, 255, 255, 0.06);
+color:var(--text);
+border:1px solid rgba(255, 255, 255, 0.08);
+text-align:left;
+}
+
+.legend-button:hover{
+box-shadow:0 18px 34px rgba(0, 0, 0, 0.2);
+}
+
+.legend-card.locked .legend-button{
+cursor:not-allowed;
+color:var(--muted);
+}
+
+.legend-button:disabled{
+opacity:0.72;
+box-shadow:none;
+}
+
+.modal{
+position:fixed;
+inset:0;
+display:grid;
+place-items:center;
+padding:1rem;
+background:rgba(5, 4, 8, 0.76);
+backdrop-filter:blur(12px);
+z-index:20;
+}
+
+.modal[hidden]{
 display:none;
-z-index:1000;
+}
+
+.modal-card{
+width:min(880px, 100%);
+max-height:min(92vh, 900px);
+overflow:auto;
+padding:1rem;
+border-radius:28px;
+background:rgba(12, 10, 18, 0.96);
+border:1px solid var(--border);
+box-shadow:var(--shadow);
+}
+
+.modal-card img{
+width:100%;
+height:min(45vh, 320px);
+object-fit:cover;
+border-radius:20px;
+border:1px solid var(--border-soft);
+}
+
+.modal-copy{
+padding:1rem 0 0.35rem;
+}
+
+.modal-copy p{
+margin:0.8rem 0 0;
+font-size:1.22rem;
+line-height:1.65;
+color:var(--text);
+}
+
+.close-button{
+padding:0.8rem 1rem;
+margin-left:auto;
+display:flex;
+align-items:center;
+justify-content:center;
+background:rgba(255, 255, 255, 0.06);
+color:var(--text);
+border:1px solid var(--border-soft);
+}
+
+.toast{
+position:fixed;
+left:50%;
+bottom:1.25rem;
+transform:translate(-50%, 18px);
+padding:0.9rem 1.1rem;
+border-radius:999px;
+background:rgba(12, 10, 18, 0.92);
+border:1px solid var(--border);
+color:var(--text);
+box-shadow:var(--shadow);
+opacity:0;
+pointer-events:none;
+transition:opacity 0.25s ease, transform 0.25s ease;
+z-index:30;
+}
+
+.toast.visible{
+opacity:1;
+transform:translate(-50%, 0);
+}
+
+.pulse{
+animation:pulse 1.35s ease;
+}
+
+@keyframes pulse{
+0%{box-shadow:0 0 0 0 rgba(240, 100, 73, 0.45);}
+100%{box-shadow:0 0 0 28px rgba(240, 100, 73, 0);}
+}
+
+@media (max-width: 900px){
+.status-strip,
+.layout{
+grid-template-columns:1fr;
+}
+
+.hero,
+.panel{
+padding:1.2rem;
+border-radius:24px;
+}
+
+.hero p,
+#texto,
+.modal-copy p{
+font-size:1.14rem;
+}
+}
+
+@media (max-width: 640px){
+.page-shell{
+width:min(100% - 1rem, 1200px);
+padding-top:0.75rem;
+}
+
+.hero h1{
+font-size:2.4rem;
+}
+
+.hero-actions,
+.actions-row{
+flex-direction:column;
+}
+
+.status-card strong{
+font-size:1.25rem;
+}
+
+.panel-head{
+flex-direction:column;
+}
+}
+
+@media (prefers-reduced-motion: reduce){
+html{
+scroll-behavior:auto;
+}
+
+*{
+animation:none !important;
+transition:none !important;
+}
 }
 </style>
 </head>
-
 <body>
 
-<video autoplay muted loop>
-<source src="https://www.w3schools.com/howto/rain.mp4">
+<video class="background-video" autoplay muted loop playsinline poster="fondaso10.png">
+<source src="fondo.mp4.mp4" type="video/mp4">
 </video>
 
-<h1 id="titulo">Leyendas de Malchingui</h1>
-<p style="text-align:center; max-width:700px; margin:auto;">
-Las leyendas forman parte de la identidad cultural de Malchinguí. 
-Este sistema interactivo permite explorarlas de forma dinámica mediante un juego.
+<div class="page-shell">
+<a class="back-link" href="index.html">← Volver al inicio</a>
+
+<header class="hero">
+<div class="eyebrow">Memoria viva de Malchinguí</div>
+<h1 id="titulo">Leyendas de Malchinguí</h1>
+<p>
+Recorre una experiencia interactiva inspirada en los relatos más conocidos del pueblo.
+Cada decisión puede acercarte al amanecer o dejarte atrapado entre campanas, neblina y promesas antiguas.
 </p>
 
-<div id="mensajeOculto">estas en la cima...</div>
-<div id="susto"></div>
-
-<!-- SONIDOS -->
-<audio id="sonidoWin" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
-<audio id="sonidoLose" src="https://www.soundjay.com/human/sounds/scream-01.mp3"></audio>
-<audio id="sonidoGlitch" src="https://www.soundjay.com/horror/sounds/horror-02.mp3"></audio>
-<p style="text-align:center;">
-Sistema de gamificación: desbloqueo progresivo de contenido mediante interacción del usuario.
-</p>
-<div id="game">
-<h3>❤️ Vida: <span id="vida"></span></h3>
-<p>Leyendas desbloqueadas: <span id="progreso"></span></p>
-<h2 id="texto"></h2>
-<div id="opciones"></div>
-
-<button onclick="verLeyendas()">📖 Leyendas</button>
-<button onclick="resetear()">♻ Reset</button>
+<div class="hero-actions">
+<button class="primary-button" id="playButton" type="button">Empezar la ruta</button>
+<button class="secondary-button" id="viewLegendsButton" type="button">Explorar leyendas</button>
 </div>
 
-<div id="menuLeyendas" style="display:none;">
-<h2>📚 Leyendas</h2>
-<div id="listaLeyendas"></div>
-<button onclick="volverJuego()">⬅ Volver</button>
+<div class="status-strip">
+<div class="status-card">
+<span>Vidas</span>
+<strong id="vida">3</strong>
+</div>
+<div class="status-card">
+<span>Desbloqueadas</span>
+<strong id="progresoHero">4/10</strong>
+</div>
+<div class="status-card">
+<span>Estado</span>
+<strong id="modoActual">Modo exploración</strong>
+</div>
+</div>
+</header>
+
+<main class="layout">
+<section class="panel" id="gamePanel" aria-labelledby="sceneTitle">
+<div class="panel-head">
+<div>
+<h2>Ruta interactiva</h2>
+<p>Elige con cuidado. Las buenas decisiones revelan nuevas leyendas.</p>
+</div>
+<div class="scene-badge" id="sceneBadge">Escena inicial</div>
 </div>
 
-<div id="detalleLeyenda" style="display:none;">
+<div class="story-card">
+<p class="story-label">Escena actual</p>
+<h3 id="sceneTitle">La noche desciende</h3>
+<p id="texto"></p>
+<div class="choice-grid" id="opciones"></div>
+</div>
+
+<div class="actions-row">
+<button class="secondary-button" id="restartButton" type="button">Reiniciar progreso</button>
+<button class="ghost-button" id="secretButton" type="button">Buscar pista secreta</button>
+</div>
+
+<div class="tips-card">
+<h3>Cómo funciona</h3>
+<ul>
+<li>Llegar al amanecer desbloquea una leyenda nueva.</li>
+<li>Una mala decisión consume una vida y te obliga a intentarlo otra vez.</li>
+<li>Si encuentras el secreto del título, podrás consultar todo el archivo.</li>
+</ul>
+</div>
+</section>
+
+<aside class="panel" id="legendPanel">
+<div class="panel-head">
+<div>
+<h2>Archivo de leyendas</h2>
+<p>Las primeras cuatro están abiertas desde el inicio. El resto aparece conforme avanzas.</p>
+</div>
+</div>
+
+<div class="progress-card">
+<div class="progress-label">
+<span>Progreso del archivo</span>
+<strong id="progreso">4/10</strong>
+</div>
+<div class="progress-track">
+<span class="progress-fill" id="progressFill"></span>
+</div>
+<p id="progressMessage"></p>
+</div>
+
+<div class="legend-grid" id="listaLeyendas"></div>
+</aside>
+</main>
+</div>
+
+<div class="modal" id="detalleLeyenda" hidden>
+<div class="modal-card">
+<button class="close-button" id="closeDetail" type="button">Cerrar</button>
+<img id="imgLeyenda" src="fondaso12.png" alt="Imagen de la leyenda seleccionada">
+<div class="modal-copy">
 <h2 id="tituloLeyenda"></h2>
-<img id="imgLeyenda">
 <p id="textoLeyenda"></p>
-<button onclick="volverMenu()">⬅ Volver</button>
 </div>
+</div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
+const STORAGE_KEY = "malchingui-leyendas-v2";
+const MAX_LIVES = 3;
+const BASE_UNLOCKED = 4;
 
-/* VARIABLES */
-let vida = parseInt(localStorage.getItem("vida")) || 3;
-let desbloqueadas = parseInt(localStorage.getItem("desbloqueadas"));
-
-/* 🔒 SOLO 4 INICIALES */
-if(isNaN(desbloqueadas) || desbloqueadas < 4){
-desbloqueadas = 4;
+const leyendas = [
+{
+titulo: "Leyenda del campanario",
+img: "imagen1.jpg",
+frase: "Una campana desaparecida que todavía resuena entre la peña y la noche.",
+texto: "Cuenta la leyenda que, al fundarse la parroquia de Malchinguí, un grupo de personas trajo una campana desde San Antonio cargándola a pie. Al descansar una noche en Chaguarpungo, la campana desapareció misteriosamente. Se dice que el diablo se la llevó y la dejó en una peña inaccesible. Desde entonces, los habitantes aseguran que en noches de luna llena se escuchan sus campanadas, aunque nunca llegó a la iglesia."
+},
+{
+titulo: "Las lagunas de Mojanda",
+img: "imagen2.jpg",
+frase: "Un castigo divino convirtió la soberbia en agua y memoria.",
+texto: "Cuenta la leyenda que una pareja rica que vivía cerca del Cerro Negro negó ayuda a un mendigo, quien en realidad era Dios. Solo el mayordomo mostró bondad y fue advertido para huir. Como castigo por su egoísmo, Dios provocó una gran inundación que destruyó la hacienda y sus tierras. Con el tiempo, ese lugar se transformó en las actuales lagunas de Mojanda."
+},
+{
+titulo: "El Guagua Negro",
+img: "imagen3.jpg",
+frase: "Un retorno estremecedor que castiga el abandono y el prejuicio.",
+texto: "Cuenta la leyenda que una pareja rechazó a su hijo por su color de piel, y el padre lo arrojó a una quebrada. Años después, el niño reapareció misteriosamente; al ser recogido por su padre, se transformó en un ser monstruoso y lo mató como castigo. Luego advirtió a su madre que no lo abandonara, dejando una lección sobre las consecuencias del rechazo y los prejuicios."
+},
+{
+titulo: "El duende enamorado",
+img: "imagen4.jpg",
+frase: "Una presencia obsesiva persigue a quien brilla demasiado en la noche.",
+texto: "Cuenta la leyenda que el duende se enamoraba de jóvenes con cabello largo y ojos grandes. Marisol, una chica de Malchinguí, comenzó a ser perseguida por este ser mientras iba por agua. Tras un encuentro aterrador, un hombre la ayudó y le explicó que el duende estaba atraído por su belleza. Siguiendo su consejo, Marisol se cortó el cabello y buscó protección espiritual, logrando así liberarse y volver a su vida normal."
+},
+{
+titulo: "El Animero",
+img: "imagen5.jpg",
+frase: "Una penitencia nocturna convirtió a un joven en guía de almas.",
+texto: "Cuenta la leyenda que un joven, tras maltratar a sus padres, recibió como penitencia vestirse de animero y recorrer Malchinguí por las noches rezando con una calavera y una campana. Se dice que las almas lo seguían y que la gente evitaba verlo. Tras cumplir su castigo, el joven fue perdonado."
+},
+{
+titulo: "El hombre que no sirvió al diablo",
+img: "imagen6.jpg",
+frase: "Ni el oro del inframundo pudo doblegar del todo a un hombre humilde.",
+texto: "Cuenta la leyenda que Juan, un hombre humilde, encontró al diablo en el páramo y fue llevado a una cueva donde lo obligaron a trabajar sacando oro. Al no poder cumplir bien las tareas, el diablo se molestó y lo devolvió al lugar donde lo encontró. Al regresar, Juan contó su historia, pero nadie le creyó y pensaron que era producto del alcohol."
+},
+{
+titulo: "Por ser bonita",
+img: "imagen7.jpg",
+frase: "La belleza se vuelve peligro cuando el duende ronda las quebradas.",
+texto: "Cuenta la leyenda que el Duende es un ser pequeño y maligno que ataca especialmente a mujeres y niños, apareciendo en quebradas. Se dice que puede golpear con una mano de hierro o de lana, causando daño de cualquier forma. En una ocasión, una mujer llamada Carmen fue atacada mientras lavaba ropa; aunque otros no podían verlo, sentían su presencia. Con ayuda de un sacerdote lograron ahuyentarlo, y desde entonces se cree que es un espíritu peligroso que habita en esos lugares."
+},
+{
+titulo: "La caja ronca",
+img: "imagen8.jpg",
+frase: "Una procesión de muertos enseñó a no desafiar lo desconocido.",
+texto: "Cuenta la leyenda que, durante la Semana Santa en Malchinguí, se decía que a medianoche los muertos realizaban su propia procesión por las calles. Todos evitaban salir, excepto una joven llamada Jacinta, quien se asustó al escucharlos. Para protegerla, una curandera organizó un ritual con niños llorando para ahuyentar a los espíritus. Gracias a esto, Jacinta se salvó y aprendió a no desafiar lo desconocido."
+},
+{
+titulo: "La hacienda",
+img: "imagen9.jpg",
+frase: "La avaricia del patrón terminó sepultada bajo una tormenta memorable.",
+texto: "Cuenta la leyenda que un hombre rico negó ayuda a un mendigo, quien en realidad era Dios. Solo el mayordomo mostró compasión, por lo que fue advertido para huir con su familia. Como castigo por la avaricia del dueño, Dios provocó una gran tormenta que terminó inundando toda la hacienda."
+},
+{
+titulo: "Las almas del camión de medianoche",
+img: "imagen10.jpg",
+frase: "Un viaje nocturno se convirtió en encuentro con el mismísimo diablo.",
+texto: "Cuenta la leyenda que Ignacio, un comerciante, tomó de noche un bus sin saber que estaba lleno de almas y conducido por el diablo. Al darse cuenta del peligro, sus gallos cantaron al amanecer y lo salvaron, haciendo que lo expulsaran del bus. Al despertar, estaba en una ladera y fue rescatado por la gente del lugar."
 }
-
-let adminActivo = false;
-let ultimaEscena="";
-let clave="";
-
-/* LEYENDAS */
-let leyendas=[
-{titulo:"Leyenda del campanario",img:"imagen1.jpg",texto:"Cuenta la leyenda que, al fundarse la parroquia de Malchinguí, un grupo de personas trajo una campana desde San Antonio cargándola a pie. Al descansar una noche en Chaguarpungo, la campana desapareció misteriosamente. Se dice que el diablo se la llevó y la dejó en una peña inaccesible. Desde entonces, los habitantes aseguran que en noches de luna llena se escuchan sus campanadas, aunque nunca llegó a la iglesia."},
-{titulo:"Las lagunas de Mojanda",img:"imagen2.jpg",texto:"Cuenta la leyenda que una pareja rica que vivía cerca del Cerro Negro negó ayuda a un mendigo, quien en realidad era Dios. Solo el mayordomo mostró bondad y fue advertido para huir. Como castigo por su egoísmo, Dios provocó una gran inundación que destruyó la hacienda y sus tierras. Con el tiempo, ese lugar se transformó en las actuales lagunas de Mojanda."},
-{titulo:"El Guagua Negro",img:"imagen3.jpg ",texto:"Cuenta la leyenda que una pareja rechazó a su hijo por su color de piel, y el padre lo arrojó a una quebrada. Años después, el niño reapareció misteriosamente; al ser recogido por su padre, se transformó en un ser monstruoso y lo mató como castigo. Luego advirtió a su madre que no lo abandonara, dejando una lección sobre las consecuencias del rechazo y los prejuicios."},
-{titulo:"El duende Enamorado",img:" imagen4.jpg",texto:"Cuenta la leyenda que el duende se enamoraba de jóvenes con cabello largo y ojos grandes. Marisol, una chica de Malchinguí, comenzó a ser perseguida por este ser mientras iba por agua. Tras un encuentro aterrador, un hombre la ayudó y le explicó que el duende estaba atraído por su belleza. Siguiendo su consejo, Marisol se cortó el cabello y buscó protección espiritual, logrando así liberarse y volver a su vida normal."},
-{titulo:"El Animero",img:" imagen5.jpg",texto:"Cuenta la leyenda que un joven, tras maltratar a sus padres, recibió como penitencia vestirse de animero y recorrer Malchinguí por las noches rezando con una calavera y una campana. Se dice que las almas lo seguían y que la gente evitaba verlo. Tras cumplir su castigo, el joven fue perdonado."},
-{titulo:"El hombre que no sirvio al diablo",img:"imagen6.jpg ",texto:"Cuenta la leyenda que Juan, un hombre humilde, encontró al diablo en el páramo y fue llevado a una cueva donde lo obligaron a trabajar sacando oro. Al no poder cumplir bien las tareas, el diablo se molestó y lo devolvió al lugar donde lo encontró. Al regresar, Juan contó su historia, pero nadie le creyó y pensaron que era producto del alcohol."},
-{titulo:"Por ser bonita",img:" imagen7.jpg",texto:"Cuenta la leyenda que el Duende es un ser pequeño y maligno que ataca especialmente a mujeres y niños, apareciendo en quebradas. Se dice que puede golpear con una mano de hierro o de lana, causando daño de cualquier forma. En una ocasión, una mujer llamada Carmen fue atacada mientras lavaba ropa; aunque otros no podían verlo, sentían su presencia. Con ayuda de un sacerdote lograron ahuyentarlo, y desde entonces se cree que es un espíritu peligroso que habita en esos lugares."},
-{titulo:"La caja ronca",img:"imagen8.jpg ",texto:"Cuenta la leyenda que, durante la Semana Santa en Malchinguí, se decía que a medianoche los muertos realizaban su propia procesión por las calles. Todos evitaban salir, excepto una joven llamada Jacinta, quien se asustó al escucharlos. Para protegerla, una curandera organizó un ritual con niños llorando para ahuyentar a los espíritus. Gracias a esto, Jacinta se salvó y aprendió a no desafiar lo desconocido."},
-{titulo:"La Hacienda",img:"imagen9.jpg ",texto:"Cuenta la leyenda que un hombre rico negó ayuda a un mendigo, quien en realidad era Dios. Solo el mayordomo mostró compasión, por lo que fue advertido para huir con su familia. Como castigo por la avaricia del dueño, Dios provocó una gran tormenta que terminó inundando toda la hacienda."},
-{titulo:"Las almas del camión de media noche",img:" imagen10.jpg",texto:"Cuenta la leyenda que Ignacio, un comerciante, tomó de noche un bus sin saber que estaba lleno de almas y conducido por el diablo. Al darse cuenta del peligro, sus gallos cantaron al amanecer y lo salvaron, haciendo que lo expulsaran del bus. Al despertar, estaba en una ladera y fue rescatado por la gente del lugar."}
 ];
 
-/* GUARDAR */
-function guardar(){
-document.getElementById("progreso").innerText = desbloqueadas + "/" + leyendas.length;
-localStorage.setItem("vida",vida);
-localStorage.setItem("desbloqueadas",desbloqueadas);
-}
-
-/* HISTORIA */
-const historia={
-inicio:{texto:"¿A dónde vas?",opciones:[
-{texto:"Bosque",destino:"bosque"},
-{texto:"Casa",destino:"casa"}
-]},
-bosque:{texto:"Escuchas algo...",opciones:[
-{texto:"Investigar",destino:"finalBueno"},
-{texto:"Huir",destino:"muerte"}
-]},
-casa:{texto:"Algo te mira...",opciones:[
-{texto:"Entrar",destino:"muerte"},
-{texto:"Salir",destino:"finalBueno"}
-]},
-muerte:{texto:"Has muerto 💀",opciones:[
-{texto:"Reintentar",destino:"inicio"}
-]},
-finalBueno:{texto:"Sobreviviste 🕯️",opciones:[
-{texto:"Reiniciar",destino:"inicio"}
-]}
-};
-
-/* ESCENA */
-function mostrarEscena(e){
-let escena=historia[e];
-texto.innerText=escena.texto;
-
-if(e==="muerte") sonidoLose.play();
-if(e==="finalBueno") sonidoWin.play();
-
-/* 🔓 DESBLOQUEO REAL */
-if(e==="finalBueno" && ultimaEscena!=="finalBueno"){
-if(desbloqueadas < leyendas.length){
-desbloqueadas++;
-document.body.classList.add("desbloqueo");
-setTimeout(()=>document.body.classList.remove("desbloqueo"),1500);
-}
-}
-
-ultimaEscena=e;
-
-vidaSpan.innerText=vida;
-guardar();
-
-opciones.innerHTML="";
-escena.opciones.forEach(o=>{
-let b=document.createElement("button");
-b.innerText=o.texto;
-b.onclick=()=>mostrarEscena(o.destino);
-opciones.appendChild(b);
-});
-}
-
-/* LEYENDAS */
-function verLeyendas(){
-game.style.display="none";
-menuLeyendas.style.display="block";
-listaLeyendas.innerHTML="";
-
-leyendas.forEach((l,i)=>{
-if(i < desbloqueadas || adminActivo){
-listaLeyendas.innerHTML+=`<button onclick="abrirLeyenda(${i})">${l.titulo}</button>`;
-}else{
-listaLeyendas.innerHTML+=`<p>🔒 ???</p>`;
-}
-});
-}
-
-/* DETALLE */
-function abrirLeyenda(i){
-menuLeyendas.style.display="none";
-detalleLeyenda.style.display="block";
-let l=leyendas[i];
-tituloLeyenda.innerText=l.titulo;
-imgLeyenda.src=l.img;
-textoLeyenda.innerText=l.texto;
-}
-
-/* VOLVER */
-function volverJuego(){menuLeyendas.style.display="none";game.style.display="block";}
-function volverMenu(){detalleLeyenda.style.display="none";menuLeyendas.style.display="block";}
-
-/* 👁️ ADMIN SECRETO */
-function activarAdmin(){
-adminActivo=true;
-document.body.classList.add("modoOscuro");
-mensajeOculto.style.display="block";
-sonidoGlitch.play();
-setTimeout(()=>mensajeOculto.style.display="none",3000);
-}
-
-/* CLICK SECRETO */
-let clicks=0;
-document.getElementById("titulo").onclick=()=>{
-clicks++;
-if(clicks>=5){
-activarAdmin();
-clicks=0;
+const historia = {
+inicio: {
+badge: "Escena inicial",
+title: "La noche desciende",
+text: "Estás en la entrada de Malchinguí. El viento baja desde la montaña y, a lo lejos, parecen escucharse campanadas. Puedes seguir la piedra iluminada hacia el campanario, buscar la neblina de la laguna o entrar a una casa abandonada antes de que la noche se cierre por completo.",
+options: [
+{ text: "Seguir las campanadas del campanario", target: "campanario" },
+{ text: "Caminar hacia la neblina de la laguna", target: "laguna" },
+{ text: "Refugiarte en la casa abandonada", target: "casa" }
+]
+},
+campanario: {
+badge: "Campanario",
+title: "La peña imposible",
+text: "Una campana escondida parece sonar desde lo alto. La roca está fría y el eco te rodea. Sientes que alguien te observa desde la oscuridad.",
+options: [
+{ text: "Guardar silencio y escuchar con respeto", target: "amanecer" },
+{ text: "Intentar arrancar la campana de la peña", target: "perdida" }
+]
+},
+laguna: {
+badge: "Laguna",
+title: "El reflejo de Mojanda",
+text: "Junto al agua aparece un anciano empapado que pide ayuda. Nadie más está allí. La superficie de la laguna se mueve como si quisiera responder por él.",
+options: [
+{ text: "Compartir tu agua y escucharlo", target: "amanecer" },
+{ text: "Ignorarlo y seguir de largo", target: "perdida" }
+]
+},
+casa: {
+badge: "Casa vieja",
+title: "Un llanto detrás de la puerta",
+text: "Dentro de la casa todo está quieto, excepto un llanto infantil que viene del cuarto del fondo. La vela que llevas tiembla como si quisiera apagarse.",
+options: [
+{ text: "Salir y seguir el camino exterior", target: "sendero" },
+{ text: "Abrir la puerta y mirar de frente", target: "perdida" }
+]
+},
+sendero: {
+badge: "Sendero",
+title: "La procesión invisible",
+text: "En medio del camino aparece una fila de sombras rezando. Entre ellas, una figura con campana y calavera avanza sin tocar el suelo.",
+options: [
+{ text: "Caminar en silencio y unirte a la oración", target: "amanecer" },
+{ text: "Burlarte para demostrar que no tienes miedo", target: "perdida" }
+]
+},
+perdida: {
+badge: "Peligro",
+title: "La noche te alcanza",
+text: "Algo te siguió demasiado de cerca. Apenas logras escapar, pero la experiencia te deja sin aliento y pierdes una vida antes de volver a intentarlo.",
+type: "lose",
+options: [
+{ text: "Respirar hondo y regresar al inicio", target: "inicio" }
+]
+},
+agotado: {
+badge: "Reinicio",
+title: "Las sombras ganaron esta vez",
+text: "Perdiste todas tus vidas. Las leyendas no te expulsan del todo, pero te obligan a recomenzar la ruta con calma. Tu archivo desbloqueado sigue intacto.",
+options: [
+{ text: "Comenzar otra vez", target: "inicio" }
+]
+},
+amanecer: {
+badge: "Amanecer",
+title: "Sobreviviste a la noche",
+text: "El primer rayo de luz toca la montaña y entiendes que cada leyenda guarda una advertencia. Tu recorrido sumó una nueva historia al archivo de Malchinguí.",
+type: "win",
+options: [
+{ text: "Explorar otro camino", target: "inicio" }
+]
 }
 };
 
-/* TECLADO SECRETO */
-document.addEventListener("keydown",(e)=>{
-clave+=e.key.toLowerCase();
-if(clave.includes("ghost")){
-activarAdmin();
-clave="";
+const refs = {
+title: document.getElementById("titulo"),
+sceneTitle: document.getElementById("sceneTitle"),
+sceneText: document.getElementById("texto"),
+sceneBadge: document.getElementById("sceneBadge"),
+options: document.getElementById("opciones"),
+life: document.getElementById("vida"),
+heroProgress: document.getElementById("progresoHero"),
+progress: document.getElementById("progreso"),
+progressFill: document.getElementById("progressFill"),
+progressMessage: document.getElementById("progressMessage"),
+legendList: document.getElementById("listaLeyendas"),
+mode: document.getElementById("modoActual"),
+modal: document.getElementById("detalleLeyenda"),
+modalTitle: document.getElementById("tituloLeyenda"),
+modalImage: document.getElementById("imgLeyenda"),
+modalText: document.getElementById("textoLeyenda"),
+toast: document.getElementById("toast"),
+playButton: document.getElementById("playButton"),
+viewLegendsButton: document.getElementById("viewLegendsButton"),
+restartButton: document.getElementById("restartButton"),
+secretButton: document.getElementById("secretButton"),
+closeDetail: document.getElementById("closeDetail"),
+gamePanel: document.getElementById("gamePanel"),
+legendPanel: document.getElementById("legendPanel")
+};
+
+let toastTimer;
+let secretClicks = 0;
+let secretBuffer = "";
+let state = loadState();
+
+function createDefaultState() {
+return {
+scene: "inicio",
+unlocked: BASE_UNLOCKED,
+lives: MAX_LIVES,
+adminMode: false
+};
+}
+
+function loadState() {
+try {
+const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+const initial = createDefaultState();
+if (!saved || typeof saved !== "object") {
+return initial;
+}
+
+return {
+scene: historia[saved.scene] ? saved.scene : initial.scene,
+unlocked: normalizeUnlocked(saved.unlocked),
+lives: normalizeLives(saved.lives),
+adminMode: Boolean(saved.adminMode)
+};
+} catch (error) {
+return createDefaultState();
+}
+}
+
+function normalizeUnlocked(value) {
+const parsed = Number.parseInt(value, 10);
+if (Number.isNaN(parsed)) {
+return BASE_UNLOCKED;
+}
+return Math.min(leyendas.length, Math.max(BASE_UNLOCKED, parsed));
+}
+
+function normalizeLives(value) {
+const parsed = Number.parseInt(value, 10);
+if (Number.isNaN(parsed)) {
+return MAX_LIVES;
+}
+return Math.min(MAX_LIVES, Math.max(1, parsed));
+}
+
+function saveState() {
+localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function syncBodyMode() {
+document.body.classList.toggle("admin-mode", state.adminMode);
+refs.mode.textContent = state.adminMode ? "Modo nocturno activo" : "Modo exploración";
+}
+
+function updateStatus() {
+refs.life.textContent = String(state.lives);
+const progressText = `${state.unlocked}/${leyendas.length}`;
+refs.progress.textContent = progressText;
+refs.heroProgress.textContent = progressText;
+refs.progressFill.style.width = `${(state.unlocked / leyendas.length) * 100}%`;
+
+if (state.adminMode) {
+refs.progressMessage.textContent = "El modo secreto está activo: puedes leer todo el archivo sin esperar más desbloqueos.";
+return;
+}
+
+if (state.unlocked >= leyendas.length) {
+refs.progressMessage.textContent = "Ya descubriste todas las leyendas del archivo. Ahora puedes recorrerlas en cualquier orden.";
+return;
+}
+
+const remaining = leyendas.length - state.unlocked;
+refs.progressMessage.textContent = `Todavía quedan ${remaining} ${remaining === 1 ? "leyenda oculta" : "leyendas ocultas"}. Llega al amanecer para revelar otra.`;
+}
+
+function renderScene() {
+const scene = historia[state.scene] || historia.inicio;
+refs.sceneBadge.textContent = scene.badge;
+refs.sceneTitle.textContent = scene.title;
+refs.sceneText.textContent = scene.text;
+refs.options.replaceChildren();
+
+scene.options.forEach((option) => {
+const button = document.createElement("button");
+button.type = "button";
+button.className = "choice-button";
+button.textContent = option.text;
+button.addEventListener("click", () => goToScene(option.target));
+refs.options.appendChild(button);
+});
+}
+
+function renderLegends() {
+refs.legendList.replaceChildren();
+
+leyendas.forEach((legend, index) => {
+const unlocked = state.adminMode || index < state.unlocked;
+const card = document.createElement("article");
+card.className = `legend-card${unlocked ? "" : " locked"}`;
+
+const stateTag = document.createElement("div");
+stateTag.className = "legend-state";
+stateTag.textContent = unlocked ? "Disponible" : "Bloqueada";
+
+const title = document.createElement("h3");
+title.textContent = unlocked ? legend.titulo : `Leyenda ${index + 1}`;
+
+const phrase = document.createElement("p");
+phrase.textContent = unlocked ? legend.frase : "Sigue explorando la ruta interactiva para revelar esta historia.";
+
+const button = document.createElement("button");
+button.type = "button";
+button.className = "legend-button";
+button.textContent = unlocked ? "Abrir relato" : "Aún no disponible";
+
+if (unlocked) {
+button.addEventListener("click", () => openLegend(index));
+} else {
+button.disabled = true;
+}
+
+card.append(stateTag, title, phrase, button);
+refs.legendList.appendChild(card);
+});
+}
+
+function openLegend(index) {
+const legend = leyendas[index];
+if (!legend) {
+return;
+}
+
+refs.modalTitle.textContent = legend.titulo;
+refs.modalText.textContent = legend.texto;
+refs.modalImage.src = legend.img;
+refs.modalImage.alt = `Imagen de ${legend.titulo}`;
+refs.modal.hidden = false;
+document.body.classList.add("modal-open");
+}
+
+function closeLegend() {
+refs.modal.hidden = true;
+document.body.classList.remove("modal-open");
+}
+
+function showToast(message) {
+window.clearTimeout(toastTimer);
+refs.toast.textContent = message;
+refs.toast.classList.add("visible");
+toastTimer = window.setTimeout(() => {
+refs.toast.classList.remove("visible");
+}, 2600);
+}
+
+function pulsePanel(panel) {
+panel.classList.remove("pulse");
+void panel.offsetWidth;
+panel.classList.add("pulse");
+}
+
+function goToScene(target) {
+const scene = historia[target];
+if (!scene) {
+return;
+}
+
+if (scene.type === "lose") {
+state.lives -= 1;
+if (state.lives <= 0) {
+state.lives = MAX_LIVES;
+state.scene = "agotado";
+showToast("Perdiste todas las vidas. El camino se reinició, pero tu progreso quedó guardado.");
+} else {
+state.scene = target;
+showToast(`La noche te venció en esta ruta. Te quedan ${state.lives} ${state.lives === 1 ? "vida" : "vidas"}.`);
+}
+pulsePanel(refs.gamePanel);
+} else {
+state.scene = target;
+if (scene.type === "win") {
+if (state.unlocked < leyendas.length) {
+state.unlocked += 1;
+showToast("Desbloqueaste una nueva leyenda del archivo.");
+} else {
+showToast("Ya desbloqueaste todas las leyendas.");
+}
+pulsePanel(refs.legendPanel);
+}
+}
+
+saveState();
+updateStatus();
+renderScene();
+renderLegends();
+}
+
+function resetProgress() {
+const confirmed = window.confirm("¿Quieres reiniciar las vidas y el progreso de leyendas desbloqueadas?");
+if (!confirmed) {
+return;
+}
+
+state = createDefaultState();
+saveState();
+syncBodyMode();
+updateStatus();
+renderScene();
+renderLegends();
+closeLegend();
+showToast("Se reinició la experiencia interactiva.");
+}
+
+function activateAdminMode() {
+if (state.adminMode) {
+showToast("El modo nocturno ya está activo.");
+return;
+}
+
+state.adminMode = true;
+saveState();
+syncBodyMode();
+updateStatus();
+renderLegends();
+showToast("Has revelado el modo secreto. Todo el archivo quedó disponible.");
+}
+
+function showSecretHint() {
+showToast("Pista: el título y la palabra 'ghost' esconden algo.");
+}
+
+refs.modalImage.addEventListener("error", () => {
+refs.modalImage.src = "fondaso12.png";
+});
+
+refs.playButton.addEventListener("click", () => {
+refs.gamePanel.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+refs.viewLegendsButton.addEventListener("click", () => {
+refs.legendPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+refs.restartButton.addEventListener("click", resetProgress);
+refs.secretButton.addEventListener("click", showSecretHint);
+refs.closeDetail.addEventListener("click", closeLegend);
+
+refs.modal.addEventListener("click", (event) => {
+if (event.target === refs.modal) {
+closeLegend();
 }
 });
 
-/* SUSTOS RANDOM */
-setInterval(()=>{
-if(Math.random()<0.1){
-let s=document.getElementById("susto");
-s.style.display="block";
-sonidoLose.play();
-setTimeout(()=>s.style.display="none",300);
+refs.title.addEventListener("click", () => {
+secretClicks += 1;
+if (secretClicks >= 5) {
+activateAdminMode();
+secretClicks = 0;
 }
-},5000);
+});
 
-/* RESET */
-function resetear(){
-localStorage.clear();
-location.reload();
+document.addEventListener("keydown", (event) => {
+secretBuffer = `${secretBuffer}${event.key.toLowerCase()}`.slice(-12);
+
+if (event.key === "Escape" && !refs.modal.hidden) {
+closeLegend();
 }
 
-/* INICIO */
-let vidaSpan=document.getElementById("vida");
-vidaSpan.innerText=vida;
-mostrarEscena("inicio");
+if (secretBuffer.includes("ghost")) {
+activateAdminMode();
+secretBuffer = "";
+}
+});
 
+syncBodyMode();
+updateStatus();
+renderScene();
+renderLegends();
 </script>
 
 </body>
