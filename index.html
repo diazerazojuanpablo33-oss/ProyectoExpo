@@ -59,6 +59,7 @@ radial-gradient(circle at top right, rgba(215, 106, 58, 0.18), transparent 32%),
 radial-gradient(circle at bottom left, rgba(31, 107, 87, 0.12), transparent 34%),
 var(--bg);
 transition:background 0.35s ease, color 0.35s ease;
+overflow-x:hidden;
 }
 
 body::before{
@@ -159,6 +160,7 @@ color:var(--brand);
 }
 
 .theme-toggle,
+.music-toggle,
 .button-primary,
 .button-secondary,
 .map-button,
@@ -177,7 +179,21 @@ font-weight:700;
 flex-shrink:0;
 }
 
+.music-toggle{
+position:fixed;
+right:1.2rem;
+bottom:1.2rem;
+z-index:30;
+padding:0.9rem 1.1rem;
+border-radius:999px;
+background:var(--brand);
+color:#fffdf8;
+font-weight:800;
+box-shadow:0 20px 38px rgba(31, 107, 87, 0.28);
+}
+
 .theme-toggle:hover,
+.music-toggle:hover,
 .button-primary:hover,
 .button-secondary:hover,
 .map-button:hover,
@@ -384,7 +400,8 @@ grid-template-columns:repeat(2, minmax(0, 1fr));
 .feature-card,
 .legend-card,
 .review-card,
-.plan-card{
+.plan-card,
+.terrain-card{
 padding:1.1rem;
 border-radius:24px;
 background:var(--surface-strong);
@@ -488,6 +505,99 @@ font-weight:800;
 display:grid;
 grid-template-columns:1.4fr 1fr 1fr;
 gap:1rem;
+}
+
+.terrain-grid{
+display:grid;
+grid-template-columns:repeat(3, minmax(0, 1fr));
+gap:1rem;
+}
+
+.terrain-card{
+display:grid;
+gap:0.95rem;
+}
+
+.terrain-card h3{
+font-size:1.35rem;
+}
+
+.terrain-card img{
+width:100%;
+aspect-ratio:16 / 11;
+object-fit:cover;
+border-radius:20px;
+}
+
+.terrain-meta{
+display:flex;
+justify-content:space-between;
+gap:0.8rem;
+align-items:flex-start;
+}
+
+.terrain-meta h3{
+margin-top:0.45rem;
+}
+
+.terrain-price{
+white-space:nowrap;
+color:var(--accent);
+font-weight:800;
+font-size:1.05rem;
+}
+
+.terrain-features{
+display:flex;
+flex-wrap:wrap;
+gap:0.6rem;
+}
+
+.terrain-card p{
+margin:0;
+color:var(--muted);
+line-height:1.7;
+}
+
+.terrain-actions{
+display:flex;
+flex-wrap:wrap;
+gap:0.75rem;
+margin-top:0.2rem;
+}
+
+.terrain-actions > *{
+flex:1 1 180px;
+}
+
+.terrain-source{
+font-size:0.86rem;
+color:var(--muted);
+}
+
+.terrain-template{
+border-style:dashed;
+background:transparent;
+}
+
+.terrain-template code{
+display:block;
+padding:0.95rem 1rem;
+border-radius:18px;
+background:rgba(31, 107, 87, 0.08);
+border:1px solid var(--line);
+white-space:pre-wrap;
+line-height:1.6;
+font-size:0.9rem;
+}
+
+.terrain-note{
+padding:1rem 1.1rem;
+border-radius:22px;
+background:rgba(31, 107, 87, 0.08);
+border:1px dashed var(--line);
+color:var(--muted);
+line-height:1.7;
 }
 
 .gallery-card{
@@ -746,6 +856,7 @@ transform:translateY(0);
 @media (max-width: 980px){
 .grid-three,
 .grid-two,
+.terrain-grid,
 .map-preview,
 .review-layout,
 .visit-grid,
@@ -782,6 +893,7 @@ align-items:flex-start;
 @media (max-width: 720px){
 .page-shell{
 width:min(100% - 1rem, 1200px);
+padding-bottom:5.8rem;
 }
 
 .site-header{
@@ -790,61 +902,91 @@ padding-top:0.55rem;
 
 .nav{
 align-items:stretch;
-padding:1rem;
+padding:0.85rem;
 border-radius:24px;
+gap:0.75rem;
 }
 
-.nav,
-.nav-links{
+.nav{
 flex-direction:column;
 }
 
 .brand{
-justify-content:center;
 width:100%;
+justify-content:flex-start;
+padding:0.15rem 0.2rem;
+}
+
+.brand span{
+font-size:1.05rem;
 }
 
 .nav-links{
 display:grid;
-grid-template-columns:repeat(2, minmax(0, 1fr));
+grid-auto-flow:column;
+grid-auto-columns:max-content;
 width:100%;
 gap:0.65rem;
+overflow-x:auto;
+padding:0.15rem 0.1rem 0.3rem;
+justify-content:flex-start;
+scrollbar-width:none;
+scroll-snap-type:x proximity;
+}
+
+.nav-links::-webkit-scrollbar{
+display:none;
 }
 
 .nav-links a{
-padding:0.8rem 0.7rem;
+padding:0.8rem 0.95rem;
 border:1px solid var(--line);
 border-radius:16px;
 background:var(--surface-strong);
 text-align:center;
+white-space:nowrap;
+scroll-snap-align:start;
 }
 
 .theme-toggle{
 width:100%;
+min-height:50px;
+}
+
+.music-toggle{
+left:0.8rem;
+right:0.8rem;
+bottom:max(0.8rem, env(safe-area-inset-bottom));
+padding:0.95rem 1rem;
+text-align:center;
 }
 
 .hero{
-min-height:auto;
+min-height:min(84svh, 760px);
 padding:1rem;
 border-radius:24px;
+align-items:end;
 }
 
 .hero-card{
-padding:1.1rem;
+padding:1.15rem;
 border-radius:22px;
 }
 
 .hero h1{
-font-size:clamp(2.2rem, 9vw, 3.4rem);
-max-width:11ch;
+font-size:clamp(2.25rem, 9.8vw, 3.35rem);
+max-width:10ch;
+line-height:1;
 }
 
 .hero p{
 font-size:1rem;
+line-height:1.65;
 }
 
 .hero-actions{
 flex-direction:column;
+gap:0.7rem;
 }
 
 .hero-actions > *,
@@ -852,18 +994,102 @@ flex-direction:column;
 width:100%;
 }
 
+.button-primary,
+.button-secondary,
+.map-button{
+min-height:56px;
+}
+
+.hero-stats{
+grid-template-columns:repeat(2, minmax(0, 1fr));
+gap:0.75rem;
+}
+
+.hero-stat:last-child{
+grid-column:1 / -1;
+}
+
 .gallery-grid{
 grid-template-columns:1fr;
 }
 
 .section-card{
-padding:1.1rem;
+padding:1rem;
 border-radius:24px;
+}
+
+.section-heading{
+margin-bottom:1rem;
+}
+
+.section-heading p{
+font-size:0.98rem;
+line-height:1.65;
+}
+
+.info-card,
+.feature-card,
+.legend-card,
+.review-card,
+.plan-card,
+.terrain-card{
+padding:1rem;
+border-radius:22px;
+}
+
+.place-card{
+padding:0.85rem;
+border-radius:22px;
+}
+
+.place-card img,
+.terrain-card img,
+.legend-card img,
+.gallery-card img{
+aspect-ratio:4 / 3;
+height:auto;
+}
+
+.terrain-meta{
+flex-direction:column;
+align-items:flex-start;
+gap:0.45rem;
+}
+
+.terrain-price{
+font-size:1.15rem;
+}
+
+.terrain-actions{
+flex-direction:column;
+}
+
+.terrain-actions > *{
+width:100%;
+}
+
+.review-form input,
+.review-form textarea,
+.review-form select{
+padding:1rem;
 }
 
 .map-frame,
 #map{
 min-height:340px;
+}
+
+.visit-card,
+.qr-card{
+padding:1rem;
+border-radius:22px;
+}
+
+.footer{
+padding:1.1rem;
+border-radius:22px;
+flex-direction:column;
+align-items:flex-start;
 }
 
 .lightbox{
@@ -886,31 +1112,58 @@ width:100%;
 }
 
 @media (max-width: 560px){
-.nav-links{
-grid-template-columns:1fr;
-}
-
 .hero-stat{
 padding:0.9rem;
 }
 
 .section-heading h2{
-font-size:1.8rem;
+font-size:1.72rem;
 }
 
 .place-card img,
-.gallery-card img{
-aspect-ratio:16 / 10;
-height:auto;
-}
-
-.gallery-card{
-min-height:auto;
+.gallery-card img,
+.terrain-card img{
+aspect-ratio:16 / 11;
 }
 
 .qr-card img{
 max-width:180px;
 margin:0 auto;
+}
+
+.hero{
+min-height:min(78svh, 680px);
+}
+
+.hero-card{
+padding:1rem;
+}
+
+.hero h1{
+font-size:clamp(2rem, 10vw, 2.8rem);
+}
+
+.eyebrow{
+font-size:0.78rem;
+letter-spacing:0.08em;
+}
+
+.button-primary,
+.button-secondary,
+.map-button,
+.theme-toggle,
+.music-toggle{
+font-size:0.97rem;
+}
+
+.music-toggle{
+left:0.7rem;
+right:0.7rem;
+padding:0.9rem 0.95rem;
+}
+
+.terrain-template code{
+font-size:0.84rem;
 }
 }
 
@@ -928,6 +1181,10 @@ animation:none !important;
 </head>
 <body>
 
+<audio id="backgroundMusic" loop preload="metadata">
+<source src="baile.mp4.mp4" type="audio/mp4">
+</audio>
+
 <div class="page-shell">
 <header class="site-header">
 <nav class="nav">
@@ -939,6 +1196,7 @@ animation:none !important;
 <div class="nav-links">
 <a href="#destino">Destino</a>
 <a href="#lugares">Lugares</a>
+<a href="#terrenos">Terrenos</a>
 <a href="#sabores">Sabores</a>
 <a href="#mapa">Mapa</a>
 <a href="mapa.html">Ruta completa</a>
@@ -965,6 +1223,7 @@ miradores, caminatas y relatos que siguen vivos en la memoria de su gente.
 
 <div class="hero-actions">
 <a class="button-primary" href="#lugares">Planear visita</a>
+<a class="button-secondary" href="#terrenos">Ver terrenos</a>
 <a class="button-secondary" href="mapa.html">Ver c&oacute;mo llegar</a>
 <a class="button-secondary" href="leyendasmalchingui.html">Entrar a las leyendas</a>
 </div>
@@ -1131,6 +1390,123 @@ Aunque la experiencia principal est&aacute; en Malchingu&iacute;, los paisajes d
 </div>
 </div>
 </article>
+</div>
+</section>
+
+<section class="section-card reveal" id="terrenos">
+<div class="section-heading">
+<div>
+<span class="eyebrow-plain">Terrenos</span>
+<h2>Cat&aacute;logo real de terrenos disponibles en Malchingu&iacute;</h2>
+</div>
+<p>Datos cargados con avisos publicados y visibles el 28 de abril de 2026. Cada ficha resume precio, metraje, ubicaci&oacute;n y un enlace directo al anuncio original para verificar disponibilidad.</p>
+</div>
+
+<div class="terrain-grid">
+<article class="terrain-card">
+<img src="imagen8.jpg" alt="Terreno amplio con vista abierta en Malchingu&iacute;" loading="lazy">
+<div class="terrain-meta">
+<div>
+<span class="pill">Aviso real</span>
+<h3>Barrio La Esperanza</h3>
+</div>
+<strong class="terrain-price">USD 75.000</strong>
+</div>
+<p>Terreno de 3.030 m2 a dos cuadras del centro del poblado. El aviso indica cerramiento propio, servicios b&aacute;sicos, agua de riego y una peque&ntilde;a construcci&oacute;n con cocina, sala, dormitorio y ba&ntilde;o.</p>
+<div class="terrain-features">
+<span class="pill">3.030 m2</span>
+<span class="pill">Cerca del centro</span>
+<span class="pill">Uso agr&iacute;cola o vivienda</span>
+</div>
+<div class="terrain-actions">
+<a class="button-primary" href="https://www.plusvalia.com/propiedades/clasificado/vecltein-venta-terreno-malchingui-buena-esperanza-3030-m-sup2-149647666.html" target="_blank" rel="noopener noreferrer">Ver anuncio</a>
+</div>
+<div class="terrain-source">Fuente: Plusval&iacute;a, aviso "Venta Terreno Malchingui, Buena Esperanza 3030 m2".</div>
+</article>
+
+<article class="terrain-card">
+<img src="imagen9.jpg" alt="Terreno en zona residencial de Malchingu&iacute;" loading="lazy">
+<div class="terrain-meta">
+<div>
+<span class="pill">Urbanizaci&oacute;n</span>
+<h3>Mar&iacute;a Bonita</h3>
+</div>
+<strong class="terrain-price">Desde USD 16.500</strong>
+</div>
+<p>Proyecto ubicado en la calle Pedro Moncayo y Garc&iacute;a Moreno, a tres cuadras del parque central. Publica lotes planos desde 200 m2 hasta 260 m2 con escrituras individuales y financiamiento directo.</p>
+<div class="terrain-features">
+<span class="pill">200 a 260 m2</span>
+<span class="pill">Agua, luz y alcantarillado</span>
+<span class="pill">Calles adoquinadas</span>
+</div>
+<div class="terrain-actions">
+<a class="button-primary" href="https://www.plusvalia.com/propiedades/clasificado/vecltein-terrenos-en-venta-en-malchingui-desde-%2413.500-146503524.html" target="_blank" rel="noopener noreferrer">Ver anuncio</a>
+</div>
+<div class="terrain-source">Fuente: Plusval&iacute;a, aviso "Terrenos en Venta en Malchingu&iacute; - Desde $13.500".</div>
+</article>
+
+<article class="terrain-card">
+<img src="fondaso13.png" alt="Terreno r&uacute;stico con entorno natural en Malchingu&iacute;" loading="lazy">
+<div class="terrain-meta">
+<div>
+<span class="pill">Conjunto residencial</span>
+<h3>Santa M&oacute;nica</h3>
+</div>
+<strong class="terrain-price">USD 28.900</strong>
+</div>
+<p>Terreno de 906 m2 en conjunto residencial, a 10 minutos del pueblo y a 2 minutos de la avenida principal. El aviso destaca seguridad, piscina, canchas, &aacute;reas BBQ y uso residencial urbano.</p>
+<div class="terrain-features">
+<span class="pill">906 m2</span>
+<span class="pill">Seguridad y amenidades</span>
+<span class="pill">Servicios b&aacute;sicos</span>
+</div>
+<div class="terrain-actions">
+<a class="button-primary" href="https://www.plusvalia.com/propiedades/clasificado/vecltein-terreno-en-malchingui-148547441.html" target="_blank" rel="noopener noreferrer">Ver anuncio</a>
+</div>
+<div class="terrain-source">Fuente: Plusval&iacute;a, aviso "Terreno en Malchingu&iacute;".</div>
+</article>
+
+<article class="terrain-card">
+<img src="fondaso12.png" alt="Terreno esquinero con vista abierta en Malchingu&iacute;" loading="lazy">
+<div class="terrain-meta">
+<div>
+<span class="pill">Esquinero</span>
+<h3>Centro de Malchingu&iacute;</h3>
+</div>
+<strong class="terrain-price">USD 25.500</strong>
+</div>
+<p>Terreno plano de 900 m2, descrito como esquinero y con vista hacia Cotopaxi, Ilinizas y Cayambe. El anuncio menciona agua potable, alcantarillado, electricidad y potencial para proyecto residencial o Airbnb.</p>
+<div class="terrain-features">
+<span class="pill">900 m2</span>
+<span class="pill">Servicios completos</span>
+<span class="pill">Ideal para inversi&oacute;n</span>
+</div>
+<div class="terrain-actions">
+<a class="button-primary" href="https://www.plusvalia.com/propiedades/clasificado/vecltein-terreno-esquinero-de-venta-en-malchingui-149430515.html" target="_blank" rel="noopener noreferrer">Ver anuncio</a>
+</div>
+<div class="terrain-source">Fuente: Plusval&iacute;a, aviso "Terreno Esquinero de Venta en Malchingui".</div>
+</article>
+
+<article class="terrain-card terrain-template">
+<div>
+<span class="pill">Plantilla</span>
+<h3>Agregar nuevo terreno</h3>
+</div>
+<p>Esta tarjeta queda lista como modelo para que sigas ampliando el cat&aacute;logo con m&aacute;s propiedades reales cuando encuentres nuevos avisos.</p>
+<code>Titulo del lote
+Precio
+Ubicacion
+Metraje
+Servicios o ventajas
+Link del anuncio</code>
+<div class="terrain-actions">
+<a class="button-secondary" href="https://www.plusvalia.com/venta/terrenos/pichincha/pedro-moncayo/malchingui/con-ingreso-independiente" target="_blank" rel="noopener noreferrer">Buscar m&aacute;s terrenos</a>
+</div>
+</article>
+</div>
+
+<div class="terrain-note" style="margin-top:1rem;">
+Los avisos inmobiliarios cambian con frecuencia. Antes de publicar un precio como definitivo, conviene abrir el enlace original y confirmar si el terreno sigue disponible.
 </div>
 </section>
 
@@ -1393,6 +1769,8 @@ Comentario
 </footer>
 </div>
 
+<button class="music-toggle" id="musicToggle" type="button" aria-pressed="false">Activar m&uacute;sica</button>
+
 <div class="lightbox" id="lightbox" hidden>
 <div class="lightbox-card">
 <div class="lightbox-head">
@@ -1408,9 +1786,12 @@ Comentario
 const REVIEW_KEY = "malchingui-reviews-v2";
 const VISIT_KEY = "malchingui-visits-v2";
 const THEME_KEY = "malchingui-theme-v2";
+const MUSIC_KEY = "malchingui-music-v1";
 
 const refs = {
 themeToggle: document.getElementById("themeToggle"),
+backgroundMusic: document.getElementById("backgroundMusic"),
+musicToggle: document.getElementById("musicToggle"),
 visitCount: document.getElementById("visitCount"),
 reviewForm: document.getElementById("reviewForm"),
 reviewList: document.getElementById("reviewList"),
@@ -1425,6 +1806,38 @@ lightboxClose: document.getElementById("lightboxClose"),
 routeView: document.getElementById("routeView"),
 focusTown: document.getElementById("focusTown")
 };
+
+function updateMusicButton(isPlaying) {
+refs.musicToggle.textContent = isPlaying ? "Pausar m\u00fasica" : "Activar m\u00fasica";
+refs.musicToggle.setAttribute("aria-pressed", String(isPlaying));
+}
+
+async function playBackgroundMusic() {
+try {
+refs.backgroundMusic.volume = 0.35;
+await refs.backgroundMusic.play();
+localStorage.setItem(MUSIC_KEY, "on");
+updateMusicButton(true);
+} catch (error) {
+localStorage.setItem(MUSIC_KEY, "off");
+updateMusicButton(false);
+}
+}
+
+function pauseBackgroundMusic() {
+refs.backgroundMusic.pause();
+localStorage.setItem(MUSIC_KEY, "off");
+updateMusicButton(false);
+}
+
+function loadMusicPreference() {
+const savedPreference = localStorage.getItem(MUSIC_KEY);
+updateMusicButton(false);
+
+if (savedPreference === "on") {
+playBackgroundMusic();
+}
+}
 
 function applyTheme(theme) {
 document.body.dataset.theme = theme;
@@ -1567,6 +1980,15 @@ const nextTheme = document.body.dataset.theme === "night" ? "day" : "night";
 applyTheme(nextTheme);
 });
 
+refs.musicToggle.addEventListener("click", async () => {
+if (refs.backgroundMusic.paused) {
+await playBackgroundMusic();
+return;
+}
+
+pauseBackgroundMusic();
+});
+
 const map = L.map("map", {
 scrollWheelZoom: false
 }).setView([-0.06, -78.44], 10);
@@ -1616,6 +2038,7 @@ observer.observe(element);
 });
 
 loadTheme();
+loadMusicPreference();
 incrementVisits();
 renderReviews();
 </script>
