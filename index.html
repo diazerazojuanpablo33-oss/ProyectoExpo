@@ -671,6 +671,16 @@ gap:0.75rem;
 flex:1 1 180px;
 }
 
+.route-status{
+margin-top:0.9rem;
+padding:0.95rem 1rem;
+border-radius:20px;
+background:rgba(31, 107, 87, 0.08);
+border:1px solid var(--line);
+color:var(--muted);
+line-height:1.6;
+}
+
 .review-layout{
 display:grid;
 grid-template-columns:minmax(0, 0.95fr) minmax(0, 1.05fr);
@@ -1651,9 +1661,9 @@ Colores, productos frescos y movimiento constante. Es una parada sencilla, pero 
 <div class="section-heading">
 <div>
 <span class="eyebrow-plain">Mapa</span>
-<h2>Ubicaci&oacute;n referencial para organizar tu salida</h2>
+<h2>Ruta por carretera para llegar a Malchingu&iacute;</h2>
 </div>
-<p>Este mapa muestra una referencia visual entre Quito y Malchingu&iacute;. Para una vista m&aacute;s completa, puedes abrir la p&aacute;gina dedicada al recorrido.</p>
+<p>Este mapa intenta trazar la ruta vial real entre Quito y Malchingu&iacute; usando caminos y carreteras. Si el servicio de c&aacute;lculo no responde, se mostrar&aacute; una referencia visual de respaldo.</p>
 </div>
 
 <div class="map-preview">
@@ -1664,12 +1674,13 @@ Colores, productos frescos y movimiento constante. Es una parada sencilla, pero 
 <div class="map-side">
 <article class="plan-card">
 <h3>Ruta sugerida</h3>
-<p>Salida desde Quito, trayecto corto por carretera y llegada a un entorno de aire limpio, paisaje abierto y ritmo tranquilo.</p>
+<p>Salida desde Quito, conexi&oacute;n por la Panamericana Norte y acceso vial hacia Malchingu&iacute; con un trazo calculado sobre carreteras reales.</p>
 <div class="map-actions" style="margin-top:0.9rem;">
 <button class="map-button" id="routeView" type="button">Ver ruta</button>
 <button class="map-button" id="focusTown" type="button">Centrar Malchingu&iacute;</button>
 <a class="map-button" href="mapa.html">Abrir mapa completo</a>
 </div>
+<div class="route-status" id="routeStatus" aria-live="polite">Calculando ruta exacta por carretera...</div>
 </article>
 
 <article class="plan-card">
@@ -1804,7 +1815,8 @@ lightboxImage: document.getElementById("lightboxImage"),
 lightboxTitle: document.getElementById("lightboxTitle"),
 lightboxClose: document.getElementById("lightboxClose"),
 routeView: document.getElementById("routeView"),
-focusTown: document.getElementById("focusTown")
+focusTown: document.getElementById("focusTown"),
+routeStatus: document.getElementById("routeStatus")
 };
 
 function updateMusicButton(isPlaying) {
@@ -1998,28 +2010,83 @@ maxZoom: 19,
 attribution: "&copy; OpenStreetMap"
 }).addTo(map);
 
-const quito = L.marker([-0.1807, -78.4678]).addTo(map).bindPopup("Quito");
-const malchingui = L.marker([-0.0046, -78.4053]).addTo(map).bindPopup("Malchingu\u00ed");
+const quitoCoords = [-0.1807, -78.4678];
+const malchinguiCoords = [-0.0046, -78.4053];
+const fallbackRouteCoords = [
+quitoCoords,
+[-0.146, -78.46],
+[-0.113, -78.451],
+[-0.074, -78.433],
+[-0.031, -78.414],
+malchinguiCoords
+];
 
-const route = L.polyline([
-[-0.1807, -78.4678],
-[-0.11, -78.445],
-[-0.0046, -78.4053]
-], {
+const quito = L.marker(quitoCoords).addTo(map).bindPopup("Quito");
+const malchingui = L.marker(malchinguiCoords).addTo(map).bindPopup("Malchingu\u00ed");
+let routeLayer = null;
+
+function updateRouteStatus(message) {
+refs.routeStatus.textContent = message;
+}
+
+function setRouteLayer(latlngs, isFallback) {
+if (routeLayer) {
+map.removeLayer(routeLayer);
+}
+
+routeLayer = L.polyline(latlngs, {
 color: "#d76a3a",
 weight: 5,
-opacity: 0.88,
-dashArray: "10 8"
+opacity: 0.92,
+dashArray: isFallback ? "10 8" : null,
+lineJoin: "round"
 }).addTo(map);
 
-map.fitBounds(route.getBounds(), { padding: [30, 30] });
+map.fitBounds(routeLayer.getBounds(), { padding: [30, 30] });
+}
+
+function showFallbackRoute() {
+setRouteLayer(fallbackRouteCoords, true);
+updateRouteStatus("No se pudo cargar la ruta vial exacta en este momento. Se muestra una referencia visual de respaldo entre Quito y Malchingu\u00ed.");
+}
+
+async function loadExactRoute() {
+const osrmUrl = "https://router.project-osrm.org/route/v1/driving/" +
+`${quitoCoords[1]},${quitoCoords[0]};${malchinguiCoords[1]},${malchinguiCoords[0]}?overview=full&geometries=geojson`;
+
+try {
+const response = await fetch(osrmUrl);
+
+if (!response.ok) {
+throw new Error(`HTTP ${response.status}`);
+}
+
+const data = await response.json();
+const routeGeometry = data.routes?.[0]?.geometry?.coordinates;
+
+if (!Array.isArray(routeGeometry) || !routeGeometry.length) {
+throw new Error("Sin geometr\u00eda");
+}
+
+const routeLatLngs = routeGeometry.map(([lng, lat]) => [lat, lng]);
+setRouteLayer(routeLatLngs, false);
+updateRouteStatus("Ruta vial exacta cargada. El trazo sigue carreteras reales entre Quito y Malchingu\u00ed.");
+} catch (error) {
+showFallbackRoute();
+}
+}
+
+showFallbackRoute();
+loadExactRoute();
 
 refs.routeView.addEventListener("click", () => {
-map.fitBounds(route.getBounds(), { padding: [40, 40] });
+if (routeLayer) {
+map.fitBounds(routeLayer.getBounds(), { padding: [40, 40] });
+}
 });
 
 refs.focusTown.addEventListener("click", () => {
-map.setView([-0.0046, -78.4053], 13);
+map.setView(malchinguiCoords, 13);
 malchingui.openPopup();
 });
 
